@@ -21,6 +21,11 @@ arma::vec unom(double t){
 int main()
 {   ofstream myfile;
     myfile.open ("test.csv");
+ 
+ 	CPBASIS basisobj;
+ 
+ 	KoopSys<CPBASIS> systK (0.01,&basisobj);
+ 
     CartPend syst1 (0.1,0.1,9.81,2.0,0.01);
     arma::mat Q = {
         {200,0.,0.,0.},
