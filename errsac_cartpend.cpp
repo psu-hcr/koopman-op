@@ -9,6 +9,10 @@ using namespace std;
 #include"src/error_cost.hpp"
 #include"src/SAC.hpp"
 #include"src/rk4_int.hpp"
+
+#include"src/koopsys.hpp"
+#include"src/cpbasis.hpp"
+
 arma::vec xd(double t){
         return arma::zeros(4);};
 arma::vec unom(double t){
