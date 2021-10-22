@@ -1,5 +1,5 @@
-# huma-ergodicObj
-An implemenetation of Sequential Action Control and Hybrid Shared Control with examples
+# koopman-op
+An implemenetation of data-driven control using the Koopman Operator.
 ## Requirements
  - cmake version 2.8.3 or higher
  
@@ -16,7 +16,7 @@ An implemenetation of Sequential Action Control and Hybrid Shared Control with e
 
 ## To build the project
 
-- Change `/home/kzf5356/human-ergodicObj` Line 14 of CMakeLists.txt to the location of the repository on your machine.
+- Change `/home/kzf5356/iiwa_ros/koopman-op` Line 14 of CMakeLists.txt to the location of the repository on your machine.
 
 - Run cmake to generate the build directory and Makefile
 
@@ -26,10 +26,8 @@ An implemenetation of Sequential Action Control and Hybrid Shared Control with e
 
       $ make
 
-*Note that all examples using images as the reference distribution are not set up to build with CMakelists. Images need to be added to this folder and their filenames added to individual scripts.*
+## Run a simple example of a cart-pendulum
 
-## Run one of the examples
-
-    $ ./build/examplename
+    $ ./build/errsac_cp
 
 - Data from the simulation is saved in a text file

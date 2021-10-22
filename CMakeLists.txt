@@ -15,23 +15,23 @@ include_directories(${ARMADILLO_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} ${OpenMP_IN
 
 set(EXECUTABLE_OUTPUT_PATH build/)
 
-add_executable(sac_cartpend sac_cartpend.cpp)
-target_link_libraries(sac_cartpend ${ARMADILLO_LIBRARIES})
+add_executable(errsac_cp errsac_cartpend.cpp)
+target_link_libraries(errsac_cp ${ARMADILLO_LIBRARIES})
 
-add_executable(mda_cartpend mda_cartpend.cpp)
-target_link_libraries(mda_cartpend ${ARMADILLO_LIBRARIES})
+#add_executable(mda_cartpend mda_cartpend.cpp)
+#target_link_libraries(mda_cartpend ${ARMADILLO_LIBRARIES})
 
-add_executable(mig_mda_cartpend mig_mda_cartpend.cpp)
-target_link_libraries(mig_mda_cartpend ${ARMADILLO_LIBRARIES})
+#add_executable(mig_mda_cartpend mig_mda_cartpend.cpp)
+#target_link_libraries(mig_mda_cartpend ${ARMADILLO_LIBRARIES})
 
-add_executable(ergsac_cartpend ergsac_cartpend.cpp)
-target_link_libraries(ergsac_cartpend ${ARMADILLO_LIBRARIES})
+#add_executable(ergsac_cartpend ergsac_cartpend.cpp)
+#target_link_libraries(ergsac_cartpend ${ARMADILLO_LIBRARIES})
 
-add_executable(sac_doubleint sac_doubleint.cpp)
-target_link_libraries(sac_doubleint ${ARMADILLO_LIBRARIES})
+#add_executable(sac_doubleint sac_doubleint.cpp)
+#target_link_libraries(sac_doubleint ${ARMADILLO_LIBRARIES})
 
-add_executable(ergsac_doubleint ergsac_doubleint.cpp)
-target_link_libraries(ergsac_doubleint ${ARMADILLO_LIBRARIES} ${OpenCV_LIBS} ${OpenMP_LIBS})
+#add_executable(ergsac_doubleint ergsac_doubleint.cpp)
+#target_link_libraries(ergsac_doubleint ${ARMADILLO_LIBRARIES} ${OpenCV_LIBS} ${OpenMP_LIBS})
 
 #add_executable(ergsac_dilincoln ergsac_dilincoln.cpp)
 #target_link_libraries(ergsac_dilincoln ${ARMADILLO_LIBRARIES} ${OpenCV_LIBS} ${OpenMP_LIBS})
@@ -39,8 +39,8 @@ target_link_libraries(ergsac_doubleint ${ARMADILLO_LIBRARIES} ${OpenCV_LIBS} ${O
 #add_executable(ergsac_mda ergsac_mda.cpp)
 #target_link_libraries(ergsac_mda ${ARMADILLO_LIBRARIES} ${OpenCV_LIBS} ${OpenMP_LIBS})
 
-add_executable(dklsac_doubleint dklsac_doubleint.cpp)
-target_link_libraries(dklsac_doubleint ${ARMADILLO_LIBRARIES} ${OpenMP_LIBS})
+#add_executable(dklsac_doubleint dklsac_doubleint.cpp)
+#target_link_libraries(dklsac_doubleint ${ARMADILLO_LIBRARIES} ${OpenMP_LIBS})
 
 #add_executable(dklsac_di_image dklsac_di_image.cpp)
 #target_link_libraries(dklsac_di_image ${ARMADILLO_LIBRARIES} ${OpenMP_LIBS} ${OpenCV_LIBS})

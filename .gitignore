@@ -1,3 +1,10 @@
+*.png
+*.csv
+#MAKEfiles
+CMakeFiles/*
+*.cmake
+CMakeCache.txt
+
 # Prerequisites
 *.d
 
