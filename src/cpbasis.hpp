@@ -13,7 +13,7 @@ class CPBASIS {
 		arma::vec zx(const arma::vec& x);
 		arma::vec zu(const arma::vec& x, const arma::vec& u);
 		arma::vec dvdu(const arma::vec& z);
-		int zdim = 10;
+		int zdim = 7;
 		int xdim = 6;
 		//int udim = 5;
         
@@ -34,11 +34,11 @@ arma::vec CPBASIS::zx (const arma::vec& x){//th,thdot,xc,xcdot,xcdot^2
 					 1.0};
 	return psix;
 }
-arma::vec CPBASIS::zu(const arma::vec& x, const arma::vec& u){//needs to be linear in
-    arma::vec psiu = {u(0),									//control for most LQ methods 
-                      u(0)*cos(x(0)),						//including SAC
+arma::vec CPBASIS::zu(const arma::vec& x, const arma::vec& u){
+    arma::vec psiu = {u(0)};/*,	make it just the control so Ku = B								
+                      u(0)*cos(x(0)),						
 					  u(0)*cos(x(1)),
-                      20.*cos(x(0)*PI/20.)*cos(x(0)*PI/20.)};
+                      20.*cos(x(0)*PI/20.)*cos(x(0)*PI/20.)};*/
     return psiu;
 }; 
 /*

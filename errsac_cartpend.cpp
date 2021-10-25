@@ -15,6 +15,8 @@ using namespace std;
 
 arma::vec xd(double t){
         return arma::zeros(4);};
+arma::vec xdk(double t){
+        return arma::zeros(6);};
 arma::vec unom(double t){
         return arma::zeros(1);};
 
@@ -33,6 +35,14 @@ int main()
         {0.,0.,20.,0.},
         {0.,0.,0.,1.}};
     arma::mat R = 0.3*arma::eye(1,1);
+ 	arma::mat Qk = {
+        {200,0.,0.,0.,0.,0.},
+        {0., 0.,0.,0.,0.,0.},
+        {0.,0.,20.,0.,0.,0.},
+        {0.,0.,0.,1.,0.,0.},
+		{0.,0.,0.,0.,0.,0.},
+		{0.,0.,0.,0.,0.,0.}};
+    //arma::mat R = 0.3*arma::eye(1,1);
     arma::vec umax = {20};
  
     arma::vec xwrap,zwrap;
@@ -42,7 +52,9 @@ int main()
     systK.Xcurr = {-3.1, 0.0,0.0,0.0};
  	zwrap = syst1.proj_func(syst1.Xcurr);
     errorcost<CartPend> cost (Q,R,xd,&syst1);
+ 	errorcost<KoopSys<CPBASIS>> costK (Qk,R,xdk,&systK);
     sac<CartPend,errorcost<CartPend>> sacsys (&syst1,&cost,0.,1.0,umax,unom);
+ 	sac<KoopSys<CPBASIS>,errorcost<KoopSys<CPBASIS>>> sacsysK (&systK,&costK,0.,1.0,umax,unom);
     //arma::mat unom = arma::zeros<arma::mat>(1,sacsys.T_index);
        
     myfile<<"time,theta,thetadot,x,xdot,u\n";
@@ -59,6 +71,7 @@ int main()
 	systK.calc_K();
 	systK.step();
 	zwrap=systK.proj_func(systK.Zcurr);
+	sacsys.SAC_calc();
 	syst1.Ucurr = sacsys.ulist.col(0); 
     sacsys.unom_shift();
     if(fmod(syst1.tcurr,5)<syst1.dt)cout<<"Time: "<<syst1.tcurr<<"\n";
