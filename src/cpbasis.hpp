@@ -40,6 +40,13 @@ arma::vec CPBASIS::zu(const arma::vec& x, const arma::vec& u){
                       20.*cos(x(0)*PI/20.)*cos(x(0)*PI/20.)};
     return psiu;
 }; 
+arma::vec CPBASIS::dvdu(const arma::vec& x, const arma::vec& u){
+    arma::vec psiu = {u(0),
+                      u(0)*cos(x(0)),
+					  u(0)*cos(x(1)),
+                      20.*cos(u(0)*PI/20.)*cos(u(0)*PI/20.)};
+    return psiu;
+}; 
 
 inline arma::vec CPBASIS::zxu(const arma::vec& x,const arma::vec& u){
     arma::vec psixu = arma::join_cols(zx(x),zu(x,u));
