@@ -56,6 +56,7 @@ int main()
 	sacsys.SAC_calc();
 	systK.update_XU(syst1.Xcurr,sacsys.ulist.col(0));
 	systK.calc_K();
+	systK.step();
 	syst1.Ucurr = sacsys.ulist.col(0); 
     sacsys.unom_shift();
     if(fmod(syst1.tcurr,5)<syst1.dt)cout<<"Time: "<<syst1.tcurr<<"\n";

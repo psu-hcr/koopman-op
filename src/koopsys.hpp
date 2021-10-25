@@ -13,12 +13,12 @@ class KoopSys {
     arma::mat G;
     double Mindex=1;
     arma::mat Kdisc;
-    //arma::cx_mat Kx,Ku;
+    arma::mat Kx,Ku;
     public:
-        arma::cx_mat K;
+        arma::mat K;
         double dt;
         double tcurr=0.0;
-        arma::vec Xcurr, Ucurr,Xprev,Uprev;
+        arma::vec Xcurr, Ucurr,Xprev,Uprev,Zcurr;
         arma::mat xdlist;
         KoopSys (double _dt, basis *_zfuncs);
         arma::vec proj_func (const arma::vec& x);
@@ -37,6 +37,7 @@ KoopSys<basis>::KoopSys (double _dt, basis *_zfuncs){
     dt = _dt;//step size
     A = arma::zeros(zfuncs->zdim,zfuncs->zdim);
     G = arma::zeros(zfuncs->zdim,zfuncs->zdim);
+    K = arma::ones<arma::mat>(zfuncs->zdim,zfuncs->zdim);
     //Kx = arma::eye(zfuncs->xdim,zfuncs->xdim);
     //Ku = arma::eye(zfuncs->udim,zfuncs->udim);
     
@@ -51,18 +52,12 @@ arma::vec KoopSys<basis>::proj_func (const arma::vec& x){
     return xwrap;
 }
 template<class basis>
-arma::vec KoopSys<basis>::f(const arma::vec& x, const arma::vec& u){
-    arma::vec xdot = {x(1),
-                      g/h*sin(x(0)) + B*x(1)/(m*h*h)-u(0)*cos(x(0))/h,
-                      x(3),
-                      u(0)};
-    return xdot;
+arma::vec KoopSys<basis>::f(const arma::vec& z, const arma::vec& u){
+    arma::vec zx = z.subvec(0,zfuncs->xdim-1);
+    arma::vec zu = z.subvec(zfuncs->xdim,zfuncs->zdim-1);
+    arma::vec zdot = Kx*zx+Ku*zu;
+    return zdot;
 }; 
-    
- //   const arma::vec& zx, const arma::vec& zu){
-   // arma::vec zdot = Kx*zx+Ku*zu;
-    //return zdot;
-//}; 
 template<class basis>
 inline arma::mat KoopSys<basis>::dfdx(const arma::vec& x, const arma::vec& u){
     arma::mat A = {
@@ -85,7 +80,8 @@ inline arma::vec KoopSys<basis>::hx(const arma::vec& x){
 }; 
 template<class basis>
 void KoopSys<basis>::step(){ 
-    Xcurr = RK4_step(this,Xcurr,Ucurr,dt);
+    Zcurr = zfuncs->zxu(Xcurr,Ucurr);
+    Zcurr = RK4_step(this,Zcurr,Ucurr,dt);
     tcurr = tcurr+dt;
 };
 
@@ -104,10 +100,19 @@ void KoopSys<basis>::calc_K(){
     A = ((Mindex-1)*A + ztplus1*zt.t())/Mindex;
     G = ((Mindex-1)*G + zt*zt.t())/Mindex;
     Kdisc=A*arma::pinv(G);
-    arma::logmat(K,Kdisc);
-    K=K/dt;
-    //Kx = K.submat(0,0,zfuncs->xdim-1,zfuncs->xdim-1);
-    //Ku = K.submat(0,zfuncs->xdim,zfuncs->udim-1,zfuncs->zdim-1);
+    arma::cx_mat Ktemp;
+    try{
+    Ktemp=arma::logmat(Kdisc);
+    K=arma::real(Ktemp);
+    K=K/dt;//cout<<"NO Error here!"<<endl;
+    }
+    catch (...){
+    //cout<<"Error here!"<<endl;
+    K = arma::ones<arma::mat>(zfuncs->zdim,zfuncs->zdim);
+    //cout<<"Error"<<arma::as_scalar(K(0,0))<<endl;
+    }
+    Kx = K.submat(0,0,K.n_cols-1, zfuncs->xdim-1);
+    Ku = K.submat(0,zfuncs->xdim,K.n_cols-1,K.n_cols-1);
 };
 
 #endif

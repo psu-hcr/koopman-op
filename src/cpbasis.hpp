@@ -7,12 +7,13 @@
 
 
 class CPBASIS {
-	arma::vec zx(const arma::vec& x);
-	arma::vec zu(const arma::vec& x, const arma::vec& u);
+	
 	public:
         arma::vec zxu(const arma::vec& x, const arma::vec& u);
+		arma::vec zx(const arma::vec& x);
+		arma::vec zu(const arma::vec& x, const arma::vec& u);
 		int zdim = 10;
-		//int xdim = 5;
+		int xdim = 6;
 		//int udim = 5;
         
         
@@ -28,15 +29,15 @@ arma::vec CPBASIS::zx (const arma::vec& x){//th,thdot,xc,xcdot,xcdot^2
                       x(1),
 					  x(2),
 					  x(3),
-					  x(3)*x(3)};
+					  x(3)*x(3),
+					 1.0};
 	return psix;
 }
 arma::vec CPBASIS::zu(const arma::vec& x, const arma::vec& u){
     arma::vec psiu = {u(0),
                       u(0)*cos(x(0)),
 					  u(0)*cos(x(1)),
-                      20.*cos(x(0)*PI/20.)*cos(x(0)*PI/20.),
-                      1.};
+                      20.*cos(x(0)*PI/20.)*cos(x(0)*PI/20.)};
     return psiu;
 }; 
 
