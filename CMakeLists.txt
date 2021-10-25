@@ -18,8 +18,8 @@ set(EXECUTABLE_OUTPUT_PATH build/)
 add_executable(errsac_cp errsac_cartpend.cpp)
 target_link_libraries(errsac_cp ${ARMADILLO_LIBRARIES})
 
-#add_executable(mda_cartpend mda_cartpend.cpp)
-#target_link_libraries(mda_cartpend ${ARMADILLO_LIBRARIES})
+add_executable(errsac_koopcp errsac_koopman_cp.cpp)
+target_link_libraries(errsac_koopcp ${ARMADILLO_LIBRARIES})
 
 #add_executable(mig_mda_cartpend mig_mda_cartpend.cpp)
 #target_link_libraries(mig_mda_cartpend ${ARMADILLO_LIBRARIES})

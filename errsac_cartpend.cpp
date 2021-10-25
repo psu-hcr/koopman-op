@@ -71,7 +71,7 @@ int main()
 	systK.calc_K();
 	systK.step();
 	zwrap=systK.proj_func(systK.Zcurr);
-	sacsys.SAC_calc();
+	sacsysK.SAC_calc();
 	syst1.Ucurr = sacsys.ulist.col(0); 
     sacsys.unom_shift();
     if(fmod(syst1.tcurr,5)<syst1.dt)cout<<"Time: "<<syst1.tcurr<<"\n";

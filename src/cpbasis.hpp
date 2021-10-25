@@ -13,7 +13,7 @@ class CPBASIS {
 		arma::vec zx(const arma::vec& x);
 		arma::vec zu(const arma::vec& x, const arma::vec& u);
 		arma::vec dvdu(const arma::vec& z);
-		int zdim = 7;
+		int zdim = 10;
 		int xdim = 6;
 		//int udim = 5;
         
@@ -35,13 +35,13 @@ arma::vec CPBASIS::zx (const arma::vec& x){//th,thdot,xc,xcdot,xcdot^2
 	return psix;
 }
 arma::vec CPBASIS::zu(const arma::vec& x, const arma::vec& u){
-    arma::vec psiu = {u(0)};/*,	make it just the control so Ku = B								
+    arma::vec psiu = {u(0),									
                       u(0)*cos(x(0)),						
 					  u(0)*cos(x(1)),
-                      20.*cos(x(0)*PI/20.)*cos(x(0)*PI/20.)};*/
+                      20.*cos(x(0)*PI/20.)*cos(x(0)*PI/20.)};
     return psiu;
 }; 
-/*
+
 arma::vec CPBASIS::dvdu(const arma::vec& z){
     arma::vec psiu = {{1.},
 					  {cos(z(0))},
@@ -49,7 +49,7 @@ arma::vec CPBASIS::dvdu(const arma::vec& z){
 					  {(-40.*PI/20.)*sin(z(0)*PI/20.)}};
     return psiu;
 };
-*/
+
 
 inline arma::vec CPBASIS::zxu(const arma::vec& x,const arma::vec& u){
     arma::vec psixu = arma::join_cols(zx(x),zu(x,u));
