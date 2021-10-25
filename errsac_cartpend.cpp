@@ -35,11 +35,12 @@ int main()
     arma::mat R = 0.3*arma::eye(1,1);
     arma::vec umax = {20};
  
-    arma::vec xwrap;
+    arma::vec xwrap,zwrap;
     syst1.Ucurr = {0.0}; 
     syst1.Xcurr = {-3.1, 0.0,0.0,0.0};
  	systK.Ucurr = {0.0}; 
     systK.Xcurr = {-3.1, 0.0,0.0,0.0};
+ 	zwrap = syst1.proj_func(syst1.Xcurr);
     errorcost<CartPend> cost (Q,R,xd,&syst1);
     sac<CartPend,errorcost<CartPend>> sacsys (&syst1,&cost,0.,1.0,umax,unom);
     //arma::mat unom = arma::zeros<arma::mat>(1,sacsys.T_index);
@@ -49,7 +50,7 @@ int main()
     while (syst1.tcurr<30.0){
     myfile<<syst1.tcurr<<",";
     xwrap = syst1.proj_func(syst1.Xcurr); 
-    myfile<<xwrap(0)<<","<<xwrap(1)<<",";//myfile<<syst1.Xcurr(0)<<","<<syst1.Xcurr(1)<<",";
+    myfile<<xwrap(0)<<","<<zwrap(0)<<","<<xwrap(1)<<",";//myfile<<syst1.Xcurr(0)<<","<<syst1.Xcurr(1)<<",";
     myfile<<xwrap(2)<<","<<xwrap(3)<<",";//myfile<<syst1.Xcurr(2)<<","<<syst1.Xcurr(3)<<",";
     myfile<<syst1.Ucurr(0)<<"\n";
 	syst1.step();
@@ -57,6 +58,7 @@ int main()
 	systK.update_XU(syst1.Xcurr,sacsys.ulist.col(0));
 	systK.calc_K();
 	systK.step();
+	zwrap=systK.proj_func(systK.Zcurr);
 	syst1.Ucurr = sacsys.ulist.col(0); 
     sacsys.unom_shift();
     if(fmod(syst1.tcurr,5)<syst1.dt)cout<<"Time: "<<syst1.tcurr<<"\n";
