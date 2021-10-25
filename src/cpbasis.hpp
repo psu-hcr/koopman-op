@@ -12,6 +12,8 @@ class CPBASIS {
 	public:
         arma::vec zxu(const arma::vec& x, const arma::vec& u);
 		int zdim = 10;
+		//int xdim = 5;
+		//int udim = 5;
         
         
 };

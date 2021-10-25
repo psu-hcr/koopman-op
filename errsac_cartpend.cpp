@@ -38,6 +38,8 @@ int main()
     arma::vec xwrap;
     syst1.Ucurr = {0.0}; 
     syst1.Xcurr = {-3.1, 0.0,0.0,0.0};
+ 	systK.Ucurr = {0.0}; 
+    systK.Xcurr = {-3.1, 0.0,0.0,0.0};
     errorcost<CartPend> cost (Q,R,xd,&syst1);
     sac<CartPend,errorcost<CartPend>> sacsys (&syst1,&cost,0.,1.0,umax,unom);
     //arma::mat unom = arma::zeros<arma::mat>(1,sacsys.T_index);
@@ -50,13 +52,20 @@ int main()
     myfile<<xwrap(0)<<","<<xwrap(1)<<",";//myfile<<syst1.Xcurr(0)<<","<<syst1.Xcurr(1)<<",";
     myfile<<xwrap(2)<<","<<xwrap(3)<<",";//myfile<<syst1.Xcurr(2)<<","<<syst1.Xcurr(3)<<",";
     myfile<<syst1.Ucurr(0)<<"\n";
-    syst1.step();
-    sacsys.SAC_calc();
-    syst1.Ucurr = sacsys.ulist.col(0); 
+	syst1.step();
+	sacsys.SAC_calc();
+	systK.update_XU(syst1.Xcurr,sacsys.ulist.col(0));
+	systK.calc_K();
+	syst1.Ucurr = sacsys.ulist.col(0); 
     sacsys.unom_shift();
     if(fmod(syst1.tcurr,5)<syst1.dt)cout<<"Time: "<<syst1.tcurr<<"\n";
     } 
        
     myfile.close();
+ 
+ ofstream coeff;
+ coeff.open("CP-koopman.csv");
+ systK.K.save(coeff,arma::csv_ascii);
+ coeff.close();
 }
 
