@@ -24,7 +24,7 @@ class KoopSys {
         arma::vec proj_func (const arma::vec& x);
         inline arma::vec f(const arma::vec& x, const arma::vec& u);
         inline arma::mat dfdx(const arma::vec& x, const arma::vec& u);
-        inline arma::vec hx(const arma::vec& x);
+        inline arma::mat hx(const arma::vec& x);
         void step(void);
         void update_XU(const arma::vec& x,const arma::vec& u);
         void calc_K(void);
@@ -60,23 +60,14 @@ arma::vec KoopSys<basis>::f(const arma::vec& z, const arma::vec& u){
 }; 
 template<class basis>
 inline arma::mat KoopSys<basis>::dfdx(const arma::vec& x, const arma::vec& u){
-    arma::mat A = {
-        {0,1,0,0},
-        {g/h*cos(x(0))+ u(0)*sin(x(0))/h, B/(m*h*h),0,0},
-        {0,0,0,1},
-        {0,0,0,0}
-    };
+    arma::mat A = Kx;
     return A;
 }; 
 template<class basis>
-inline arma::vec KoopSys<basis>::hx(const arma::vec& x){
-    arma::vec H = {
-        {0},
-        {-cos(x(0))/h},
-        {0},
-        {1}
-    };
-    return H;
+inline arma::mat KoopSys<basis>::hx(const arma::vec& z){
+    arma::mat B = Ku;
+    
+    return B;
 }; 
 template<class basis>
 void KoopSys<basis>::step(){ 
