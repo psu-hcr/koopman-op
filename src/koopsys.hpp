@@ -45,7 +45,7 @@ KoopSys<basis>::KoopSys (double _dt, basis *_zfuncs){
 
 template<class basis>
 arma::vec KoopSys<basis>::proj_func (const arma::vec& z){
-    arma::vec xwrap=z.subvec(0,3);
+    arma::vec xwrap=z;
     xwrap(0) = fmod(z(0)+PI, 2*PI);
     if (xwrap(0) < 0.0) xwrap(0) = xwrap(0) + 2*PI;
     xwrap(0) = xwrap(0) - PI;
@@ -54,7 +54,7 @@ arma::vec KoopSys<basis>::proj_func (const arma::vec& z){
 template<class basis>
 arma::vec KoopSys<basis>::f(const arma::vec& z, const arma::vec& u){
     arma::vec zx = z.subvec(0,zfuncs->xdim-1);
-    arma::vec zu = z.subvec(zfuncs->xdim,zfuncs->zdim-1);
+    arma::vec zu = zfuncs->zu(zx,u);
     arma::vec zdot = Kx*zx+Ku*zu;
     return zdot;
 }; 
@@ -71,8 +71,7 @@ inline arma::mat KoopSys<basis>::hx(const arma::vec& z){
 }; 
 template<class basis>
 void KoopSys<basis>::step(){ 
-    Zcurr = zfuncs->zxu(Xcurr,Ucurr);
-    Zcurr = RK4_step(this,Zcurr,Ucurr,dt);
+    Xcurr = RK4_step(this,Xcurr,Ucurr,dt);
     tcurr = tcurr+dt;
 };
 
@@ -81,7 +80,7 @@ void KoopSys<basis>::update_XU(const arma::vec& x,const arma::vec& u){
     Uprev = Ucurr;
     Ucurr = u;
     Xprev = Xcurr;
-    Xcurr = x;
+    Xcurr = zfuncs->zxu(x,u);
     Mindex++;
 };
 template<class basis>

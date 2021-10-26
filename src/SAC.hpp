@@ -73,7 +73,7 @@ void sac<system,objective>::SAC_calc(){
   double J1init,J1new,dJmin,alphad,lambda;
           
   xsol = xforward(ulist);
-  J1init = cost->calc_cost(xsol,ulist);//must execute before rhoback for ergodic cost fxns
+  J1init = cost->calc_cost(xsol,ulist);cout<<"here?"<<endl;//must execute before rhoback for ergodic cost fxns
   rhosol = rhoback(xsol, ulist);
   dJmin = 0.;//gamma*J1init
   alphad = gamma*J1init;
@@ -118,12 +118,12 @@ arma::mat sac<system,objective>::rhoback(const arma::mat& xsol,const arma::mat& 
   arma::vec rho0 = sys->Xcurr;
   xupair current;
   rho0.zeros();
-  for(int i = T_index-1; i>=0;i--){
+  for(int i = T_index-1; i>=0;i--){cout<<"or here?"<<endl;
     rhosol.col(i)=rho0;
     current.x =xsol.col(i);
     current.u = u.col(i);
     current.t = sys->tcurr+(double)i*sys->dt;
-    rho0 = RK4_step<sac,xupair>(this,rho0,current,-1.0*sys->dt);
+    rho0 = RK4_step<sac,xupair>(this,rho0,current,-1.0*sys->dt);cout<<"maybe here?"<<endl;
   } 
 return rhosol;}
 
