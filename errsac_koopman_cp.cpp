@@ -43,24 +43,24 @@ int main()
  	systK.Ucurr = {0.0}; 
     systK.Xcurr = basisobj.zx(syst1.Xcurr);
  	uK = systK.Ucurr;
- 	zwrap=syst1.proj_func(systK.Xcurr);//xwrap=syst1.proj_func(syst1.Xcurr);
+ 	zwrap=syst1.proj_func(systK.Xcurr);
     errorcost<KoopSys<CPBASIS>> costK (Qk,R,xdk,&systK);
     sac<KoopSys<CPBASIS>,errorcost<KoopSys<CPBASIS>>> sacsysK (&systK,&costK,0.,1.0,umax,unom);
-    //arma::mat unom = arma::zeros<arma::mat>(1,sacsys.T_index);
+    
        
     myfile<<"time,theta,thetadot,x,xdot,u,xK,thetaK\n";
  
-    while (syst1.tcurr<30.0){
+    while (syst1.tcurr<60.0){
     myfile<<syst1.tcurr<<",";
     xwrap = syst1.proj_func(syst1.Xcurr); 
-    myfile<<xwrap(0)<<","<<xwrap(1)<<",";//myfile<<syst1.Xcurr(0)<<","<<syst1.Xcurr(1)<<",";
-    myfile<<xwrap(2)<<","<<xwrap(3)<<",";//myfile<<syst1.Xcurr(2)<<","<<syst1.Xcurr(3)<<",";
+    myfile<<xwrap(0)<<","<<xwrap(1)<<",";
+    myfile<<xwrap(2)<<","<<xwrap(3)<<",";
     myfile<<syst1.Ucurr(0)<<","<<zwrap(2)<<","<<zwrap(0)<<"\n";
 	syst1.step();
 	systK.update_XU(syst1.Xcurr,syst1.Ucurr);
 	systK.calc_K();
-	systK.step();zwrap=systK.proj_func(systK.Xcurr);//xwrap = systK.Xcurr;
-	sacsysK.SAC_calc();//cout<<sacsysK.ulist.col(0)<<endl;
+	systK.step();zwrap=systK.proj_func(systK.Xcurr);
+	sacsysK.SAC_calc();
 	uK=sacsysK.ulist.col(0); 
 	syst1.Ucurr = uK; 
     sacsysK.unom_shift();
