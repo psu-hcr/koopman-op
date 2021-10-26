@@ -9,6 +9,7 @@
 class CPBASIS {
 	
 	public:
+		arma::vec proj_func (const arma::vec& x);
         arma::vec zxu(const arma::vec& x, const arma::vec& u);
 		arma::vec zx(const arma::vec& x);
 		arma::vec zu(const arma::vec& x, const arma::vec& u);
@@ -24,6 +25,13 @@ class CPBASIS {
 //    zfuncs=_zfuncs;//basis functions/functions of the observables
 //    dt = _dt;//step size
 //}
+arma::vec CPBASIS::proj_func (const arma::vec& x){
+    arma::vec xwrap=x;
+    xwrap(0) = fmod(x(0)+PI, 2*PI);
+    if (xwrap(0) < 0.0) xwrap(0) = xwrap(0) + 2*PI;
+    xwrap(0) = xwrap(0) - PI;
+    return xwrap;
+}
 
 arma::vec CPBASIS::zx (const arma::vec& x){//th,thdot,xc,xcdot,xcdot^2
     arma::vec psix = {x(0),
