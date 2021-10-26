@@ -44,9 +44,9 @@ KoopSys<basis>::KoopSys (double _dt, basis *_zfuncs){
 }
 
 template<class basis>
-arma::vec KoopSys<basis>::proj_func (const arma::vec& z){
-    arma::vec xwrap=z;
-    xwrap(0) = fmod(z(0)+PI, 2*PI);
+arma::vec KoopSys<basis>::proj_func (const arma::vec& x){
+    arma::vec xwrap=x;
+    xwrap(0) = fmod(x(0)+PI, 2*PI);
     if (xwrap(0) < 0.0) xwrap(0) = xwrap(0) + 2*PI;
     xwrap(0) = xwrap(0) - PI;
     return xwrap;
@@ -94,11 +94,11 @@ void KoopSys<basis>::calc_K(){
     try{
     Ktemp=arma::logmat(Kdisc);
     K=arma::real(Ktemp);
-    K=K/dt;//cout<<"NO Error here!"<<endl;
+    //K=K/dt;//cout<<"NO Error here!"<<endl;
     }
     catch (...){
     //cout<<"Error here!"<<endl;
-    K = arma::ones<arma::mat>(zfuncs->zdim,zfuncs->zdim);
+    K = 0.1*arma::ones<arma::mat>(zfuncs->zdim,zfuncs->zdim);
     //cout<<"Error"<<arma::as_scalar(K(0,0))<<endl;
     }
     Kx = K.submat(0,0,zfuncs->xdim-1, zfuncs->xdim-1);

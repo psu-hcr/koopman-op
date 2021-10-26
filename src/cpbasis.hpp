@@ -29,7 +29,7 @@ arma::vec CPBASIS::zx (const arma::vec& x){//th,thdot,xc,xcdot,xcdot^2
     arma::vec psix = {x(0),
                       x(1),
 					  x(2),
-					  x(3),
+					  sin(x(0)),//x(3),
 					  x(3)*x(3),
 					 1.0};
 	return psix;
