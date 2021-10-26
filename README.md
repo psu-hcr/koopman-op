@@ -26,8 +26,12 @@ An implemenetation of data-driven control using the Koopman Operator.
 
       $ make
 
-## Run a simple example of a cart-pendulum
+## Run a simple example of a cart-pendulum that builds a Koopman operator model of the system
 
     $ ./build/errsac_cp
+
+## Run a simple example of a cart-pendulum that builds a Koopman operator and uses it to calculate a SAC controller
+
+    $ ./build/errsac_koopcp
 
 - Data from the simulation is saved in a text file
