@@ -16,7 +16,7 @@ using namespace std;
 arma::vec xd(double t){
         return arma::zeros(4);};
 arma::vec xdk(double t){
-        return arma::zeros(10);};
+        return arma::zeros(6);};
 arma::vec unom(double t){
         return arma::zeros(1);};
 
@@ -36,16 +36,12 @@ int main()
         {0.,0.,0.,1.}};
     arma::mat R = 0.3*arma::eye(1,1);
  	arma::mat Qk = {
-        {200,0.,0.,0.,0.,0.,0,0,0,0},
-        {0., 0.,0.,0.,0.,0.,0,0,0,0},
-        {0.,0.,20.,0.,0.,0.,0,0,0,0},
-        {0.,0.,0.,1.,0.,0.,0,0,0,0},
-		{0.,0.,0.,0.,0.,0.,0,0,0,0},
-		{0.,0.,0.,0.,0.,0.,0,0,0,0},
-		{0.,0.,0.,0.,0.,0.,0,0,0,0},
-		{0.,0.,0.,0.,0.,0.,0,0,0,0},
-		{0.,0.,0.,0.,0.,0.,0,0,0,0},
-		{0.,0.,0.,0.,0.,0.,0,0,0,0}};
+        {200,0.,0.,0.,0.,0.},
+        {0., 0.,0.,0.,0.,0.},
+        {0.,0.,20.,0.,0.,0.},
+        {0.,0.,0.,1.,0.,0.},
+		{0.,0.,0.,0.,0.,0.},
+		{0.,0.,0.,0.,0.,0.}};
     //arma::mat R = 0.3*arma::eye(1,1);
     arma::vec umax = {20};
  
@@ -53,8 +49,8 @@ int main()
     syst1.Ucurr = {0.0}; 
     syst1.Xcurr = {-3.1, 0.0,0.0,0.0};
  	systK.Ucurr = {0.0}; 
-    systK.Xcurr = basisobj.zxu(syst1.Xcurr,syst1.Ucurr);
- 	zwrap = syst1.proj_func(syst1.Xcurr);
+    systK.Xcurr = basisobj.zx(syst1.Xcurr);//,syst1.Ucurr);
+ 	zwrap = syst1.proj_func(systK.Xcurr);
     errorcost<CartPend> cost (Q,R,xd,&syst1);
  	errorcost<KoopSys<CPBASIS>> costK (Qk,R,xdk,&systK);
     sac<CartPend,errorcost<CartPend>> sacsys (&syst1,&cost,0.,1.0,umax,unom);
@@ -74,7 +70,7 @@ int main()
 	systK.update_XU(syst1.Xcurr,sacsys.ulist.col(0));
 	systK.calc_K();
 	systK.step();
-	sacsysK.SAC_calc();
+	sacsysK.SAC_calc();//cout<<"is this working?"<<endl;
 	syst1.Ucurr = sacsys.ulist.col(0); 
     sacsys.unom_shift();
     if(fmod(syst1.tcurr,5)<syst1.dt)cout<<"Time: "<<syst1.tcurr<<"\n";

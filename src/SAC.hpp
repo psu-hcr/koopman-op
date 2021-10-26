@@ -55,12 +55,12 @@ class sac {
   arma::mat xforward(const arma::mat& u);//forward simulation of x
   arma::mat rhoback(const arma::mat& xsol,const arma::mat& u); //backward simulation of the adjoint
   inline arma::vec f(const arma::vec& rho, xupair pair){
-    return -cost->dldx(pair.x,pair.u,pair.t) - sys->dfdx(pair.x,pair.u).t()*rho;}//f for rho backwards sim
-};
+  	return -cost->dldx(pair.x,pair.u,pair.t) - sys->dfdx(pair.x,pair.u).t()*rho;}//f for rho backwards sim
+	};
 
 //main function for calculating a single SAC control vector
 template <class system, class objective>
-void sac<system,objective>::SAC_calc(){
+void sac<system,objective>::SAC_calc(){ 
   ulist.col(0) = sys->Ucurr;
   arma::vec ustar;
   ustar = arma::zeros<arma::vec>(size(sys->Ucurr));
@@ -70,10 +70,9 @@ void sac<system,objective>::SAC_calc(){
   arma::mat utemp = ulist;
   arma::mat usched = arma::zeros<arma::mat>(umax.n_rows,T_index);
   arma::mat Jtau = arma::zeros<arma::mat>(1,T_index);
-  double J1init,J1new,dJmin,alphad,lambda;
-          
+  double J1init,J1new,dJmin,alphad,lambda;     
   xsol = xforward(ulist);
-  J1init = cost->calc_cost(xsol,ulist);cout<<"here?"<<endl;//must execute before rhoback for ergodic cost fxns
+  J1init = cost->calc_cost(xsol,ulist);//must execute before rhoback for ergodic cost fxns
   rhosol = rhoback(xsol, ulist);
   dJmin = 0.;//gamma*J1init
   alphad = gamma*J1init;
@@ -118,12 +117,12 @@ arma::mat sac<system,objective>::rhoback(const arma::mat& xsol,const arma::mat& 
   arma::vec rho0 = sys->Xcurr;
   xupair current;
   rho0.zeros();
-  for(int i = T_index-1; i>=0;i--){cout<<"or here?"<<endl;
+  for(int i = T_index-1; i>=0;i--){
     rhosol.col(i)=rho0;
     current.x =xsol.col(i);
     current.u = u.col(i);
     current.t = sys->tcurr+(double)i*sys->dt;
-    rho0 = RK4_step<sac,xupair>(this,rho0,current,-1.0*sys->dt);cout<<"maybe here?"<<endl;
+    rho0 = RK4_step<sac,xupair>(this,rho0,current,-1.0*sys->dt);
   } 
 return rhosol;}
 

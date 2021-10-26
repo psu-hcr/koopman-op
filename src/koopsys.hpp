@@ -52,8 +52,8 @@ arma::vec KoopSys<basis>::proj_func (const arma::vec& z){
     return xwrap;
 }
 template<class basis>
-arma::vec KoopSys<basis>::f(const arma::vec& z, const arma::vec& u){
-    arma::vec zx = z.subvec(0,zfuncs->xdim-1);
+arma::vec KoopSys<basis>::f(const arma::vec& zx, const arma::vec& u){
+    //arma::vec zx = z.subvec(0,zfuncs->xdim-1);
     arma::vec zu = zfuncs->zu(zx,u);
     arma::vec zdot = Kx*zx+Ku*zu;
     return zdot;
@@ -80,7 +80,7 @@ void KoopSys<basis>::update_XU(const arma::vec& x,const arma::vec& u){
     Uprev = Ucurr;
     Ucurr = u;
     Xprev = Xcurr;
-    Xcurr = zfuncs->zxu(x,u);
+    Xcurr = zfuncs->zx(x);
     Mindex++;
 };
 template<class basis>
@@ -101,8 +101,8 @@ void KoopSys<basis>::calc_K(){
     K = arma::ones<arma::mat>(zfuncs->zdim,zfuncs->zdim);
     //cout<<"Error"<<arma::as_scalar(K(0,0))<<endl;
     }
-    Kx = K.submat(0,0,K.n_cols-1, zfuncs->xdim-1);
-    Ku = K.submat(0,zfuncs->xdim,K.n_cols-1,K.n_cols-1);
+    Kx = K.submat(0,0,zfuncs->xdim-1, zfuncs->xdim-1);
+    Ku = K.submat(0,zfuncs->xdim,zfuncs->xdim-1,K.n_cols-1);
 };
 
 #endif
