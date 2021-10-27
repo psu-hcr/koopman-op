@@ -80,8 +80,8 @@ void sac<system,objective>::SAC_calc(){
   double dJdlam;
   for(int i = 0; i<T_index;i++){
     Lam = sys->hx(xsol.col(i)).t()*rhosol.col(i)*rhosol.col(i).t()*sys->hx(xsol.col(i));
-    usched.col(i) = (Lam +cost->R).i()*(Lam*ulist.col(i) + sys->hx(xsol.col(i)).t()*rhosol.col(i)*alphad);
-    //usched.col(i) = -(cost->R).i()*(sys->hx(xsol.col(i)).t()*rhosol.col(i))+ulist.col(i);
+	usched.col(i) = (Lam +cost->R).i()*(Lam*ulist.col(i) + sys->hx(xsol.col(i)).t()*rhosol.col(i)*alphad);
+	//usched.col(i) = -(cost->R).i()*(sys->hx(xsol.col(i)).t()*rhosol.col(i))+ulist.col(i);
     dJdlam = dJdlam_t(xsol.col(i),rhosol.col(i),usched.col(i),ulist.col(i));
     Jtau.col(i) =arma::norm(usched.col(i))+dJdlam+pow((double)i*sys->dt,beta);
     }

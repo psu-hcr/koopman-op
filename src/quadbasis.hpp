@@ -33,12 +33,12 @@ arma::vec QuadBasis::zx (const arma::vec& x){//x is the measurement ag,omega,v
 					  x(4)*x(5),
 					  x(3)*x(5),
 					  x(3)*x(4)};
-	 psix = arma::join_cols(x,psix);
+	 psix = arma::join_cols(x.subvec(0,8),psix);
 	return psix;
 }
 arma::vec QuadBasis::zu(const arma::vec& x, const arma::vec& u){//recommend psiu=u;
     arma::vec psiu = u;
-    return psiu;
+    return psiu;cout<<arma::size(psiu)<<endl;
 }; 
 
 arma::vec QuadBasis::dvdu(const arma::vec& z){//if psiu=u these are all 1s
