@@ -21,7 +21,7 @@ class CPBASIS {
         
 };
 
-//KoopSys::KoopSys (double _dt, basis *_zfuncs){
+//CPBASIS::CPBASIS (double _dt, basis *_zfuncs){
 //    zfuncs=_zfuncs;//basis functions/functions of the observables
 //    dt = _dt;//step size
 //}
