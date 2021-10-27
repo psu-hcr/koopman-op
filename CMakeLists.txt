@@ -21,8 +21,8 @@ target_link_libraries(errsac_cp ${ARMADILLO_LIBRARIES})
 add_executable(errsac_koopcp errsac_koopman_cp.cpp)
 target_link_libraries(errsac_koopcp ${ARMADILLO_LIBRARIES})
 
-#add_executable(mig_mda_cartpend mig_mda_cartpend.cpp)
-#target_link_libraries(mig_mda_cartpend ${ARMADILLO_LIBRARIES})
+add_executable(sac_koopquad errsac_koopquad.cpp)
+target_link_libraries(sac_koopquad ${ARMADILLO_LIBRARIES})
 
 #add_executable(ergsac_cartpend ergsac_cartpend.cpp)
 #target_link_libraries(ergsac_cartpend ${ARMADILLO_LIBRARIES})
