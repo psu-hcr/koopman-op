@@ -10,6 +10,8 @@ class QuadRotor {
 	double kt=0.6,km=0.15,arml=0.2,m=0.6,g=9.81;//0.6,0.15,0.2,0.6,9.81
 	arma::mat J,Jinv; //arma::vec Jvec = {0.04,0.0375,0.0675};J=arma::diagmat(Jvec)
 	arma::vec e3 = {0.,0.,1.};
+	arma::vec Bvel = {0.01, 0.01, 0.05};
+    arma::vec Bang = {0.05, 0.05, 0.01};
     public:
         double dt;
         double tcurr=0.0;
@@ -30,6 +32,7 @@ QuadRotor::QuadRotor (double _dt){//add any additional system parameters
 	arma::vec Jvec = {0.04,0.0375,0.0675};
 	J=arma::diagmat(Jvec);
 	Jinv = J.i();
+	Bvel = Bvel*40.;Bang = Bang*40.;
     
 }
 
@@ -47,21 +50,21 @@ inline arma::vec QuadRotor::f(const arma::vec& x, const arma::vec& u){//control 
 						{-omega(1),omega(0),0.,v(2)},
 						{0.,0.,0.,0.}};
 	arma::mat R = h.submat(0,0,2,2);
-	double F = kt*(u(0)+u(1)+u(2)+u(3));
+	double F = kt*arma::accu(u);//(u(0)+u(1)+u(2)+u(3));
 	arma::vec M = {kt*arml*(u(1)-u(3)),
 				   kt*arml*(u(2)-u(0)),
 				   km*arml*(u(0)-u(1)+u(2)-u(3))
 					};
 	arma::mat hdot = h*twhat;
-	arma::vec omegadot = Jinv*(M + arma::cross(J*omega,omega));
-	arma::vec vdot = F/m*e3 - arma::cross(omega,v) - g*R.t()*e3; 
-    arma::vec xdot = arma::join_cols(h.as_col(),omega,v);
+	arma::vec omegadot = Jinv*(M + arma::cross(J*omega,omega))-Bang%omega;
+	arma::vec vdot = (F/m)*e3 - arma::cross(omega,v) - g*R.t()*e3 - Bvel%v; 
+    arma::vec xdot = arma::join_cols(hdot.as_col(),omegadot,vdot);//xdot(15)=0.;
     return xdot;
 }; 
 inline arma::vec QuadRotor::get_measurement(const arma::vec& x){
 	arma::mat h = arma::reshape(x.subvec(0,15),4,4);
 	arma::vec twist = x.subvec(16,21);
-	arma::mat R = arma::normalise(h.submat(0,0,2,2));
+	arma::mat R = h.submat(0,0,2,2);
 	arma::vec ag = R*(g*e3);
 	arma::vec z = arma::join_cols(ag,twist);
 	return z;
