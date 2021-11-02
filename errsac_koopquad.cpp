@@ -26,12 +26,12 @@ int main()
  
 	ofstream myfile;
     myfile.open ("test.csv");
- 
+ 	double DT = 1./200.;
  	QuadBasis basisobj;
  
- 	KoopSys<QuadBasis> systK (0.01,&basisobj);
+ 	KoopSys<QuadBasis> systK (DT,&basisobj);
  
-    QuadRotor syst1 (1./200.);
+    QuadRotor syst1 (DT);
     syst1.Ucurr = {0.,0.,0.,0.}; systK.Ucurr = syst1.Ucurr;
  	arma::mat Rinit = arma::normalise(arma::randn<arma::mat>(3,3));
  	arma::vec pinit = {1.,1.,1.,1.};

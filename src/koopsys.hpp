@@ -13,9 +13,9 @@ class KoopSys {
     arma::mat G;
     double Mindex=1;
     arma::mat Kdisc;
-    arma::mat Kx,Ku;
+    //arma::mat Kx,Ku;
     public:
-        arma::mat K;
+        arma::mat K,Kx,Ku;
         double dt;
         double tcurr=0.0;
         arma::vec Xcurr, Ucurr,Xprev,Uprev,Zcurr;

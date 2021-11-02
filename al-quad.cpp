@@ -23,15 +23,17 @@ arma::vec unom(double t){
 int main()
 {   //arma::arma_rng::set_seed(50);//set seed for reproducibility
 	arma::arma_rng::set_seed_random();
- 
+ 	
 	ofstream myfile;
     myfile.open ("test.csv");
  
+	double DT = 1./100.;
+	
  	QuadBasis basisobj;
  
- 	KoopSys<QuadBasis> systK (0.01,&basisobj);
+ 	KoopSys<QuadBasis> systK (DT,&basisobj);
  
-    QuadRotor syst1 (1./200.);
+    QuadRotor syst1 (DT);
     syst1.Ucurr = {0.,0.,0.,0.}; systK.Ucurr = syst1.Ucurr;
  	arma::mat Rinit = arma::normalise(arma::randn<arma::mat>(3,3));
  	arma::vec pinit = {1.,1.,1.,1.};
@@ -45,9 +47,11 @@ int main()
  	arma::mat Qk = arma::zeros(basisobj.xdim,basisobj.xdim);
 	arma::vec Qvec = {1,1,1,1,1,1,5,5,5};
  	Qk.submat(0,0,8,8)=arma::diagmat(Qvec);
+	arma::mat Qf = arma::zeros<arma::mat>(size(Qk));
     arma::vec umax(size(syst1.Ucurr)); umax.fill(6);
  	errorcost<KoopSys<QuadBasis>> costK (Qk,R,xdk,&systK);
     sac<KoopSys<QuadBasis>,errorcost<KoopSys<QuadBasis>>> sacsysK (&systK,&costK,0.,1.0,umax,unom);
+	lqr lqrK(Qk, R,Qf,20,umax, DT);
  
  myfile<<"time,ag1,ag2,ag3,u1,u2,u3,ag3K\n";
  arma::vec measure,agK;
@@ -63,6 +67,7 @@ int main()
 	syst1.step();
 	systK.update_XU(measure,syst1.Ucurr);
 	systK.calc_K();
+	lqrK.calc_gains(systK.Kx,systK.Ku);lqrK.set_xd(xdk(syst1.tcurr));lqrK.mu(systK.Xcurr);
 	systK.step();
 	sacsysK.SAC_calc();
 	syst1.Ucurr = sacsysK.ulist.col(0); 
