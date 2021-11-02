@@ -24,8 +24,8 @@ target_link_libraries(errsac_koopcp ${ARMADILLO_LIBRARIES})
 add_executable(sac_koopquad errsac_koopquad.cpp)
 target_link_libraries(sac_koopquad ${ARMADILLO_LIBRARIES})
 
-#add_executable(ergsac_cartpend ergsac_cartpend.cpp)
-#target_link_libraries(ergsac_cartpend ${ARMADILLO_LIBRARIES})
+add_executable(al_quad al-quad.cpp)
+target_link_libraries(al_quad ${ARMADILLO_LIBRARIES})
 
 #add_executable(sac_doubleint sac_doubleint.cpp)
 #target_link_libraries(sac_doubleint ${ARMADILLO_LIBRARIES})
