@@ -12,6 +12,7 @@ using namespace std;
 #include"src/LQR.hpp"
 #include"src/koopsys.hpp"
 #include"src/quadbasis.hpp"
+#include"src/fisher_cost.hpp"
 
 arma::vec xdk(double t){//should match xdim defined in basis
 		arma::vec ref = arma::zeros(18);
@@ -50,6 +51,8 @@ int main()
 	arma::mat Qf = arma::zeros<arma::mat>(size(Qk));
     arma::vec umax(size(syst1.Ucurr)); umax.fill(6);
  	errorcost<KoopSys<QuadBasis>> costK (Qk,R,xdk,&systK);
+	arma::vec noisecov = 0.33*umax;
+	fishcost<KoopSys<QuadBasis>> costFI (&systK,noisecov);
     sac<KoopSys<QuadBasis>,errorcost<KoopSys<QuadBasis>>> sacsysK (&systK,&costK,0.,1.0,umax,unom);
 	lqr lqrK(Qk, R,Qf,20,umax, DT);
  

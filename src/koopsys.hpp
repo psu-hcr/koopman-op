@@ -37,7 +37,7 @@ KoopSys<basis>::KoopSys (double _dt, basis *_zfuncs){
     dt = _dt;//step size
     A = arma::zeros(zfuncs->zdim,zfuncs->zdim);
     G = arma::zeros(zfuncs->zdim,zfuncs->zdim);
-    K = arma::ones<arma::mat>(zfuncs->zdim,zfuncs->zdim);
+    K = arma::randn<arma::mat>(zfuncs->zdim,zfuncs->zdim);
     //Kx = arma::eye(zfuncs->xdim,zfuncs->xdim);
     //Ku = arma::eye(zfuncs->udim,zfuncs->udim);
     
@@ -94,7 +94,7 @@ void KoopSys<basis>::calc_K(){
     }
     catch (...){
     //cout<<"Error here!"<<endl;
-    K = 0.1*arma::ones<arma::mat>(zfuncs->zdim,zfuncs->zdim);
+    K = arma::randn<arma::mat>(zfuncs->zdim,zfuncs->zdim);
     //cout<<"Error"<<arma::as_scalar(K(0,0))<<endl;
     }
     Kx = K.submat(0,0,zfuncs->xdim-1, zfuncs->xdim-1);
