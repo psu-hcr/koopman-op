@@ -13,6 +13,7 @@ using namespace std;
 #include"src/koopsys.hpp"
 #include"src/quadbasis.hpp"
 #include"src/fisher_cost.hpp"
+#include"src/ActLearnK.hpp"
 
 arma::vec xdk(double t){//should match xdim defined in basis
 		arma::vec ref = arma::zeros(18);
@@ -52,9 +53,10 @@ int main()
     arma::vec umax(size(syst1.Ucurr)); umax.fill(6);
  	errorcost<KoopSys<QuadBasis>> costK (Qk,R,xdk,&systK);
 	arma::vec noisecov = 0.33*umax;
-	fishcost<KoopSys<QuadBasis>> costFI (&systK,noisecov);
+	
     sac<KoopSys<QuadBasis>,errorcost<KoopSys<QuadBasis>>> sacsysK (&systK,&costK,0.,1.0,umax,unom);
-	lqr lqrK(Qk, R,Qf,20,umax, DT);
+	lqr lqrK(Qk, R,Qf,20,umax,xdk, DT);
+	fishcost<KoopSys<QuadBasis>,lqr> costFI (&systK,&lqrK,noisecov);
  
  myfile<<"time,ag1,ag2,ag3,u1,u2,u3,ag3K\n";
  arma::vec measure,agK;
@@ -70,7 +72,7 @@ int main()
 	syst1.step();
 	systK.update_XU(measure,syst1.Ucurr);
 	systK.calc_K();
-	lqrK.calc_gains(systK.Kx,systK.Ku);lqrK.set_xd(xdk(syst1.tcurr));lqrK.mu(systK.Xcurr);
+	lqrK.calc_gains(systK.Kx,systK.Ku);lqrK.mu(systK.Xcurr,syst1.tcurr);
 	systK.step();
 	sacsysK.SAC_calc();
 	syst1.Ucurr = sacsysK.ulist.col(0); 

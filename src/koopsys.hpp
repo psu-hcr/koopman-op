@@ -61,7 +61,7 @@ inline arma::mat KoopSys<basis>::dfdx(const arma::vec& x, const arma::vec& u){
 }; 
 template<class basis>
 inline arma::mat KoopSys<basis>::hx(const arma::vec& z){
-    arma::mat B = Ku;
+    arma::mat B = Ku*zfuncs->dvdu(z);//or just Ku?
     
     return B;
 }; 

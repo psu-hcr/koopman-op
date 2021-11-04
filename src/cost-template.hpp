@@ -17,6 +17,10 @@ class templatecost {
       arma::vec xproj = sys->proj_func(x);
       return ;//return the derivative of the incremental cost at a particular time and state
       }
+	  inline arma::vec dldu(const arma::vec& x,const arma::vec& u,double ti){//REQUIRED for active learning only
+      arma::vec xproj = sys->proj_func(x);
+      return ;//return the derivative of the incremental cost at a particular time and state
+      }
     double calc_cost(const arma::mat& x,const arma::mat& u){//REQUIRED:calculate the total cost
       arma::vec xproj;
       double J1 = 0.0;//may need calculate cost of barrier functions before main l calculation

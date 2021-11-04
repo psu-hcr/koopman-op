@@ -12,6 +12,7 @@ using namespace std;
 
 #include"src/koopsys.hpp"
 #include"src/quadbasis.hpp"
+#include"src/euler2r.hpp"
 
 arma::vec xdk(double t){//should match xdim defined in basis
 		arma::vec ref = arma::zeros(18);
@@ -26,14 +27,15 @@ int main()
  
 	ofstream myfile;
     myfile.open ("test.csv");
- 	double DT = 1./200.;
+ 	double DT = 1./100.;
  	QuadBasis basisobj;
  
  	KoopSys<QuadBasis> systK (DT,&basisobj);
  
     QuadRotor syst1 (DT);
     syst1.Ucurr = {0.,0.,0.,0.}; systK.Ucurr = syst1.Ucurr;
- 	arma::mat Rinit = arma::normalise(arma::randn<arma::mat>(3,3));
+ 	arma::mat Rinit = euler2R(arma::randu<arma::vec>(3)); 	
+	//arma::mat Rinit=arma::normalise(arma::randu<arma::mat>(3,3));
  	arma::vec pinit = {1.,1.,1.,1.};
  	arma::vec Twistinit = arma::randn<arma::vec>(6);
  	arma::mat hinit; hinit.zeros(4,4);

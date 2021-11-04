@@ -16,7 +16,7 @@ plt.plot(tlist,xK)#,'o',markersize=1)
 plt.plot(tlist,x1,'g')#o',markersize=1)
 plt.plot(tlist,x2,'r')
 plt.plot(tlist,x3,'k')
-#plt.ylim(-10,100)
+plt.ylim(-10,10)
 
 u1 = (data[0:-1,4])
 u2 = (data[0:-1,5])
