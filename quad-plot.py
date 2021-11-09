@@ -23,8 +23,8 @@ u2 = (data[0:-1,5])
 u3 = (data[0:-1,6])
 plt.figure()
 
-plt.plot(tlist,u2)
-plt.plot(tlist,u1,'k')
+plt.plot(tlist,u3)
+plt.plot(tlist,u2,'k')
 plt.plot(tlist,u1,'r')
 #plt.ylim(-5,5)
 

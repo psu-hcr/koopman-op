@@ -3,7 +3,7 @@
 #include<armadillo>
 #include"rk4_int.hpp"
 
-//const double PI = 3.1415926535987;
+
 
 template<class basis>
 class KoopSys {
@@ -61,7 +61,7 @@ inline arma::mat KoopSys<basis>::dfdx(const arma::vec& x, const arma::vec& u){
 }; 
 template<class basis>
 inline arma::mat KoopSys<basis>::hx(const arma::vec& z){
-    arma::mat B = Ku;
+    arma::mat B = Ku*zfuncs->dvdu(z);
     
     return B;
 }; 
@@ -90,12 +90,12 @@ void KoopSys<basis>::calc_K(){
     try{
     Ktemp=arma::logmat(Kdisc);
     K=arma::real(Ktemp);
-    //K=K/dt;//cout<<"NO Error here!"<<endl;
+    
     }
     catch (...){
-    //cout<<"Error here!"<<endl;
+    
     K = 0.1*arma::ones<arma::mat>(zfuncs->zdim,zfuncs->zdim);
-    //cout<<"Error"<<arma::as_scalar(K(0,0))<<endl;
+    
     }
     Kx = K.submat(0,0,zfuncs->xdim-1, zfuncs->xdim-1);
     Ku = K.submat(0,zfuncs->xdim,zfuncs->xdim-1,K.n_cols-1);

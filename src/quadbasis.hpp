@@ -11,7 +11,7 @@ class QuadBasis {
         arma::vec zxu(const arma::vec& x, const arma::vec& u);
 		arma::vec zx(const arma::vec& x);
 		arma::vec zu(const arma::vec& x, const arma::vec& u);
-		arma::vec dvdu(const arma::vec& z);
+		arma::mat dvdu(const arma::vec& z);
 		int zdim = 22;//set to length of z including v(x,u)
 		int xdim = 18;//set to length of z(x(t)) only        
         
@@ -41,11 +41,11 @@ arma::vec QuadBasis::zu(const arma::vec& x, const arma::vec& u){//recommend psiu
     return psiu;cout<<arma::size(psiu)<<endl;
 }; 
 
-arma::vec QuadBasis::dvdu(const arma::vec& z){//if psiu=u these are all 1s
-    arma::vec psiu = {{1.},
-					  {1.},
-					  {1.},
-					  {1.}};
+arma::mat QuadBasis::dvdu(const arma::vec& z){//if psiu=u this is the identity
+    arma::mat psiu = {{1.,0.,0.,0.},
+					  {0.,1.,0.,0.},
+					  {0.,0.,1.,0.},
+					  {0.,0.,0.,1.}};
     return psiu;
 };
 
