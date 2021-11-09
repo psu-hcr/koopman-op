@@ -41,7 +41,7 @@ arma::vec QuadBasis::zu(const arma::vec& x, const arma::vec& u){//recommend psiu
     return psiu;cout<<arma::size(psiu)<<endl;
 }; 
 
-arma::mat QuadBasis::dvdu(const arma::vec& z){//if psiu=u is the the identity
+arma::mat QuadBasis::dvdu(const arma::vec& z){//if psiu=u this is the identity
     arma::mat psiu = {{1.,0.,0.,0.},
 					  {0.,1.,0.,0.},
 					  {0.,0.,1.,0.},

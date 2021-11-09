@@ -16,15 +16,15 @@ plt.plot(tlist,xK)#,'o',markersize=1)
 plt.plot(tlist,x1,'g')#o',markersize=1)
 plt.plot(tlist,x2,'r')
 plt.plot(tlist,x3,'k')
-plt.ylim(-10,10)
+plt.ylim(-15,15)
 
 u1 = (data[0:-1,4])
 u2 = (data[0:-1,5])
 u3 = (data[0:-1,6])
 plt.figure()
 
-plt.plot(tlist,u2)
-plt.plot(tlist,u1,'k')
+plt.plot(tlist,u3)
+plt.plot(tlist,u2,'k')
 plt.plot(tlist,u1,'r')
 #plt.ylim(-5,5)
 

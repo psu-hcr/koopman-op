@@ -90,12 +90,9 @@ void KoopSys<basis>::calc_K(){
     try{
     Ktemp=arma::logmat(Kdisc);
     K=arma::real(Ktemp);
-    //K=K/dt;//cout<<"NO Error here!"<<endl;
     }
     catch (...){
-    //cout<<"Error here!"<<endl;
-    K = arma::randn<arma::mat>(zfuncs->zdim,zfuncs->zdim);
-    //cout<<"Error"<<arma::as_scalar(K(0,0))<<endl;
+    K = 0.1*arma::ones<arma::mat>(zfuncs->zdim,zfuncs->zdim);
     }
     Kx = K.submat(0,0,zfuncs->xdim-1, zfuncs->xdim-1);
     Ku = K.submat(0,zfuncs->xdim,zfuncs->xdim-1,K.n_cols-1);
