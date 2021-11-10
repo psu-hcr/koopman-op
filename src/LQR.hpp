@@ -56,7 +56,7 @@ void lqr::calc_gains(const arma::mat& _A,const arma::mat& _B){
 return;}
 
 arma::vec lqr::mu(const arma::vec& _x, double ti){
-	return K*(_x-xd(ti));
+	return saturation(K*(_x-xd(ti)));
 }
 arma::mat lqr::dmudz(const arma::vec& _x){
   return K;

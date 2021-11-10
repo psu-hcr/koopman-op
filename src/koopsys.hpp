@@ -78,10 +78,10 @@ void KoopSys<basis>::update_XU(const arma::vec& x,const arma::vec& u){
     Ucurr = u;
     Xprev = Xcurr;
     Xcurr = zfuncs->zx(x);
-    Mindex++;
+    
 };
 template<class basis>
-void KoopSys<basis>::calc_K(){
+void KoopSys<basis>::calc_K(){Mindex++;
     arma::vec ztplus1 = zfuncs->zxu(Xcurr,Ucurr);
     arma::vec zt = zfuncs->zxu(Xprev,Uprev);
     A = ((Mindex-1)*A + ztplus1*zt.t())/Mindex;
@@ -92,8 +92,9 @@ void KoopSys<basis>::calc_K(){
     Ktemp=arma::logmat(Kdisc);
     K=arma::real(Ktemp);
     }
-    catch (...){
-    K = 0.1*arma::ones<arma::mat>(zfuncs->zdim,zfuncs->zdim);
+    catch (...){cout<<"This is a problem."<<endl;
+    //K = 0.1*arma::ones<arma::mat>(zfuncs->zdim,zfuncs->zdim);
+	K = arma::randn<arma::mat>(zfuncs->zdim,zfuncs->zdim);
     }
     Kx = K.submat(0,0,zfuncs->xdim-1, zfuncs->xdim-1);
     Ku = K.submat(0,zfuncs->xdim,zfuncs->xdim-1,K.n_cols-1);

@@ -36,24 +36,24 @@ class alk {
     //for(int i = 0;i<ulist.n_cols-1;i++) ulist.col(i) = unom(sys->tcurr + (double)i*sys->dt);
   };
     
-  void ustar_calc();//main function for calculating the current action
+  arma::vec ustar_calc();//main function for calculating the current action
   arma::mat xforward();//forward simulation of x
   arma::mat rhoback(const arma::mat& xsol); //backward simulation of the adjoint
   inline arma::vec f(const arma::vec& rho, xupair pair){
-  	return -cost->dldx(pair.x,pair.u,pair.t);}// - cost->dfdx(pair.x,pair.u).t()*rho;}//f for rho backwards sim
+  	return -cost->dldx(pair.x,pair.u,pair.t) - cost->dfdx(pair.x,pair.u).t()*rho;}//f for rho backwards sim
 	};
 
 //main function for calculating a single control vector
 template <class system, class objective,class policy>
-void alk<system,objective,policy>::ustar_calc(){ 
+arma::vec alk<system,objective,policy>::ustar_calc(){ 
   arma::vec ustar;
   ustar = arma::zeros<arma::vec>(size(sys->Ucurr));
   arma::mat xsol,rhosol;    
   xsol = xforward();
   rhosol = rhoback(xsol);  
   ustar = -Rinv*(sys->Ku*sys->zfuncs->dvdu(sys->Xcurr)).t()*rhosol.col(0)+pol->mu(sys->Xcurr,sys->tcurr);
-  ustar=saturation(ustar);
-return;}
+  //ustar=saturation(ustar);
+return saturation(ustar);}
     
 //forward simulation of x
 template <class system, class objective,class policy>
