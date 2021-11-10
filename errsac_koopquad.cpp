@@ -36,13 +36,12 @@ int main()
 
  	arma::vec anginit = (2*arma::randu<arma::vec>(3))-1;
 	arma::mat Rinit = euler2R(anginit);
- 	//arma::mat Rinit = arma::normalise(arma::randn<arma::mat>(3,3));
  	arma::vec pinit = {0.,0.,0.,1.};
  	arma::vec Twistinit = (2*arma::randu<arma::vec>(6))-1;
-
  	arma::mat hinit; hinit.zeros(4,4);
  	hinit.submat(0,0,2,2) = Rinit; hinit.submat(0,3,3,3)=pinit;
-    syst1.Xcurr=arma::join_cols(hinit.as_col(),Twistinit);
+    
+ 	syst1.Xcurr=arma::join_cols(hinit.as_col(),Twistinit);
  	systK.Xcurr = basisobj.zx(syst1.get_measurement(syst1.Xcurr));
  
  	arma::mat R = arma::eye(syst1.Ucurr.n_rows,syst1.Ucurr.n_rows);

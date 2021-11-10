@@ -8,13 +8,14 @@
 template<class basis>
 class KoopSys {
     double m, B, g, h;
-	basis* zfuncs;
+	
     arma::mat A;
     arma::mat G;
     double Mindex=1;
     arma::mat Kdisc;
     //arma::mat Kx,Ku;
     public:
+		basis* zfuncs;
         arma::mat K,Kx,Ku;
         double dt;
         double tcurr=0.0;

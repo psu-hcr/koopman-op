@@ -2,11 +2,11 @@
 #define FISHERCOST_HPP
 #include<armadillo>
 #include <math.h>
-#include"src/koopsys.hpp"
+//#include"src/koopsys.hpp"
 
-template <class system, class objective>//system type must be KoopSys
+template <class system, class objective>//system type must be KoopSys<>
 class fishcost {
-    system* sys;
+    system* sys;//uses dfdx,zfuncs,hx
 	objective* task;//uses task->l, task->dldx,task->dldu,task->dmudz
 	arma::mat Sigma;
 	double eps = 1./10000.;
@@ -23,11 +23,10 @@ class fishcost {
       return 1./(fishTopt+eps)+task->l(x,u,ti);
       }
     inline arma::vec dldx (const arma::vec& x,const arma::vec& u,double ti){//REQUIRED
-       arma::vec dfdk = sys->zfuncs->zx(x,u);
+       arma::vec dfdk = sys->zfuncs->zx(x);
 	  double fishTopt = arma::as_scalar(dfdk.t()*Sigma*dfdk);
-	  arma::vec dldz = (-2./pow(fishTopt+eps,2))*dfdk.t()*Sigma+task->dldx(x,u,ti);
-	
-      return dldz+task->dmudx(x,u,ti).t()*task->dldu(x,u,ti);
+	  arma::vec dldz = (-2./pow(fishTopt+eps,2))*Sigma*dfdk+task->dldx(x,u,ti);
+	  return dldz+task->dmudz(x).t()*task->dldu(x,u,ti);
       }
 	inline arma::vec dldu (const arma::vec& x,const arma::vec& u,double ti){//REQUIREd 
     return task->dldu(x,u,ti);

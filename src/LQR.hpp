@@ -27,7 +27,7 @@ class lqr {
   
   void calc_gains(const arma::mat& _A,const arma::mat& _B);
   arma::vec mu(const arma::vec& _x,double ti);
-  arma::vec dmudz(const arma::vec& _x);
+  arma::mat dmudz(const arma::vec& _x);
   inline arma::mat f(const arma::mat& Pvec, int NA){
 	  arma::mat P = arma::reshape(Pvec,arma::size(Qf));
 	  arma::mat Pdot = A.t()*P + P*A - P*B*Rinv*B.t()*P + Q;
@@ -58,7 +58,7 @@ return;}
 arma::vec lqr::mu(const arma::vec& _x, double ti){
 	return K*(_x-xd(ti));
 }
-arma::vec lqr::dmudz(const arma::vec& _x){
+arma::mat lqr::dmudz(const arma::vec& _x){
   return K;
 }
 
