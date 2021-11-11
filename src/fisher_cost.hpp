@@ -9,7 +9,7 @@ class fishcost {
     system* sys;//uses dfdx,zfuncs,hx
 	objective* task;//uses task->l, task->dldx,task->dldu,task->dmudz
 	arma::mat Sigma;
-	double eps = 1./10000.;
+	double eps = pow(10,-5);
 	double infw = 100.;
   public:
     fishcost(system *_sys, objective *_task,const arma::vec SigDiag){

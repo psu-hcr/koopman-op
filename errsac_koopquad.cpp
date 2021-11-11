@@ -52,7 +52,7 @@ int main()
  	errorcost<KoopSys<QuadBasis>> costK (Qk,R,xdk,&systK);
     sac<KoopSys<QuadBasis>,errorcost<KoopSys<QuadBasis>>> sacsysK (&systK,&costK,0.,1.0,umax,unom);
  
- myfile<<"time,ag1,ag2,ag3,u1,u2,u3,ag3K\n";
+ myfile<<"time,q1,q2,q3,ag1,ag2,ag3,u1,u2,u3,err\n";
  arma::vec measure,agK;
  
  
@@ -60,18 +60,17 @@ int main()
     myfile<<syst1.tcurr<<",";
     measure = syst1.get_measurement(syst1.Xcurr);
 	agK=systK.Xcurr.subvec(0,2);
-    myfile<<measure(0)<<","<<measure(1)<<",";
-    myfile<<measure(2)<<","<<syst1.Ucurr(0)<<",";
-	//myfile<<agK(0)<<","<<agK(1)<<",";
-    //myfile<<agK(2)<<","<<syst1.Ucurr(0)<<",";
-    myfile<<syst1.Ucurr(1)<<","<<syst1.Ucurr(2)<<","<<arma::norm(measure.subvec(0,2))<<"\n";
+    myfile<<measure(0)<<","<<measure(1)<<","<<measure(2)<<",";
+	myfile<<agK(0)<<","<<agK(1)<<","<<agK(2)<<",";
+    myfile<<syst1.Ucurr(0)<<","<<syst1.Ucurr(1)<<","<<syst1.Ucurr(2)<<",";
+	myfile<<0.01*costK.l(systK.Xcurr,systK.Ucurr,systK.tcurr)<<"\n";
 	syst1.step();
-	systK.update_XU(measure,syst1.Ucurr);
-	systK.calc_K();
+	//systK.update_XU(measure,syst1.Ucurr);
+	systK.calc_K(measure,syst1.Ucurr);
 	systK.step();
 	sacsysK.SAC_calc();
-	syst1.Ucurr = unom(syst1.tcurr);//sacsysK.ulist.col(0); 
-    //sacsysK.unom_shift();
+	syst1.Ucurr = sacsysK.ulist.col(0); 
+    sacsysK.unom_shift();
     if(fmod(syst1.tcurr,5)<syst1.dt)cout<<"Time: "<<syst1.tcurr<<"\n";
     } 
        

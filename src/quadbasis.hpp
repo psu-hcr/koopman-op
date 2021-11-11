@@ -24,7 +24,7 @@ arma::vec QuadBasis::proj_func (const arma::vec& x){//angle wrapping function
 }
 
 arma::vec QuadBasis::zx (const arma::vec& x){//x is the measurement ag,omega,v
-    arma::vec psix = {x(8)*x(5),
+    arma::vec psix = {x(8)*x(4),
 					  x(7)*x(5),
 					  x(8)*x(3),
 					  x(6)*x(5),

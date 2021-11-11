@@ -67,8 +67,8 @@ int main()
     myfile<<syst1.Ucurr(0)<<","<<uK(0)<<","<<zwrap(0)<<"\n";
 	syst1.step();
 	sacsys.SAC_calc();
-	systK.update_XU(syst1.Xcurr,sacsys.ulist.col(0));
-	systK.calc_K();
+	//systK.update_XU(syst1.Xcurr,sacsys.ulist.col(0));
+	systK.calc_K(syst1.Xcurr,sacsys.ulist.col(0));
 	systK.step();zwrap=systK.proj_func(systK.Xcurr);
 	sacsysK.SAC_calc();
 	uK=sacsysK.ulist.col(0); 

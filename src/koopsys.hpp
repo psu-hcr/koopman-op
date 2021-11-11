@@ -28,7 +28,7 @@ class KoopSys {
         inline arma::mat hx(const arma::vec& x);
         void step(void);
         void update_XU(const arma::vec& x,const arma::vec& u);
-        void calc_K(void);
+        void calc_K(const arma::vec& x,const arma::vec& u);
         
 };
 
@@ -57,14 +57,14 @@ arma::vec KoopSys<basis>::f(const arma::vec& zx, const arma::vec& u){
 }; 
 template<class basis>
 inline arma::mat KoopSys<basis>::dfdx(const arma::vec& x, const arma::vec& u){
-    arma::mat A = Kx;
-    return A;
+    arma::mat Ax = Kx;
+    return Ax;
 }; 
 template<class basis>
 inline arma::mat KoopSys<basis>::hx(const arma::vec& z){
-    arma::mat B = Ku*zfuncs->dvdu(z);//or just Ku?
+    arma::mat Bx = Ku*zfuncs->dvdu(z);//or just Ku?
     
-    return B;
+    return Bx;
 }; 
 template<class basis>
 void KoopSys<basis>::step(){ 
@@ -81,13 +81,20 @@ void KoopSys<basis>::update_XU(const arma::vec& x,const arma::vec& u){
     
 };
 template<class basis>
-void KoopSys<basis>::calc_K(){Mindex++;
+void KoopSys<basis>::calc_K(const arma::vec& x,const arma::vec& u){
+	Mindex++;
+	update_XU(x,u);
     arma::vec ztplus1 = zfuncs->zxu(Xcurr,Ucurr);
     arma::vec zt = zfuncs->zxu(Xprev,Uprev);
-    A = ((Mindex-1)*A + ztplus1*zt.t())/Mindex;
-    G = ((Mindex-1)*G + zt*zt.t())/Mindex;
+    A = A + (ztplus1*zt.t()-A)/Mindex;
+    G = G + (zt*zt.t()-G)/Mindex;
+	try{
     Kdisc=A*arma::pinv(G);
-    arma::cx_mat Ktemp;
+	}
+	catch(...){cout<<"pinv failed"<<endl;
+	K = arma::randn<arma::mat>(zfuncs->zdim,zfuncs->zdim);
+	}
+	arma::cx_mat Ktemp;
     try{
     Ktemp=arma::logmat(Kdisc);
     K=arma::real(Ktemp);

@@ -37,51 +37,63 @@ int main()
  	KoopSys<QuadBasis> systK (DT,&basisobj);
  	QuadRotor syst1 (DT);
 	//initialize states and control for both systems
-    syst1.Ucurr = {0.,0.,0.,0.}; systK.Ucurr = syst1.Ucurr;
- 	arma::vec anginit = (2*arma::randu<arma::vec>(3))-1;cout<<anginit<<endl;
+    syst1.Ucurr = {0.77,-0.77,-0.04,1.08}; systK.Ucurr = syst1.Ucurr;
+ 	arma::vec anginit = {0.95,0.78,0.82};//(2*arma::randu<arma::vec>(3))-1;
 	arma::mat Rinit = euler2R(anginit);
  	arma::vec pinit = {0.,0.,0.,1.};
- 	arma::vec Twistinit = (2*arma::randu<arma::vec>(6))-1;
+ 	arma::vec Twistinit = {0.91,0.85,0.73,-0.52,0.52,0.74};//(2*arma::randu<arma::vec>(6))-1;
  	arma::mat hinit; hinit.zeros(4,4);
  	hinit.submat(0,0,2,2) = Rinit; hinit.submat(0,3,3,3)=pinit;
 	
     syst1.Xcurr=arma::join_cols(hinit.as_col(),Twistinit);
  	systK.Xcurr = basisobj.zx(syst1.get_measurement(syst1.Xcurr));
- 
-	//set values for Q,R,Qf,umax
+ 	
+	//set values for Q,R,Qf,umax,noisecov,Regularization
  	arma::mat R = arma::eye(syst1.Ucurr.n_rows,syst1.Ucurr.n_rows);
  	arma::mat Qk = arma::zeros(basisobj.xdim,basisobj.xdim);
 	arma::vec Qvec = {1,1,1,1,1,1,5,5,5};
- 	Qk.submat(0,0,8,8)=arma::diagmat(Qvec);
+ 	Qk.submat(0,0,8,8)=10*arma::diagmat(Qvec);
 	arma::mat Qf = arma::zeros<arma::mat>(size(Qk));
     arma::vec umax(size(syst1.Ucurr)); umax.fill(6);
- 	//errorcost<KoopSys<QuadBasis>> costK (Qk,R,xdk,&systK);
-	arma::vec noisecov = 1.0*arma::ones(basisobj.xdim);
+ 	arma::vec noisecov = 1.0*arma::ones(basisobj.xdim);
 	arma::mat Rtil = 0.1*arma::eye(systK.Ucurr.n_rows,systK.Ucurr.n_rows);
-	
-    //sac<KoopSys<QuadBasis>,errorcost<KoopSys<QuadBasis>>> sacsysK (&systK,&costK,0.,1.0,umax,unom);
+	//initialize lqr policy, fisher informaiton cost, and active learning controller
 	lqr lqrK(Qk, R,Qf,20,umax,xdk, DT);
 	fishcost<KoopSys<QuadBasis>,lqr> costFI (&systK,&lqrK,noisecov);
- 	alk<KoopSys<QuadBasis>,fishcost<KoopSys<QuadBasis>,lqr>,lqr> ALpol(&systK,&costFI,&lqrK,T,umax,Rtil);
+ 	alk<KoopSys<QuadBasis>,fishcost<KoopSys<QuadBasis>,lqr>,lqr> 		
+							ALpol(&systK,&costFI,&lqrK,T,umax,Rtil);
+ 	
+//set up file to store data
  myfile<<"time,q1,q2,q3,ag1,ag2,ag3,u1,u2,mu1,lqr\n";
  arma::vec measure,agK,mu;
- mu = arma::zeros(arma::size(umax));
  
-	while (syst1.tcurr<5.0){
+ 	//add initial conditions to state sample
+ 	measure = syst1.get_measurement(syst1.Xcurr);
+ 	systK.calc_K(measure,syst1.Ucurr);
+ /*arma::mat kx = 5.*arma::eye(size(systK.Kx));
+ arma::mat ku = 5.*arma::eye(size(systK.Ku));
+ lqrK.calc_gains(kx,ku);
+ mu = lqrK.mu(systK.Xcurr,syst1.tcurr);
+ cout<<basisobj.zx(systK.Xcurr)<<endl<<lqrK.K<<endl<<mu<<endl;*/
+ 	lqrK.calc_gains(systK.Kx,systK.Ku);
+ 	mu = lqrK.mu(systK.Xcurr,syst1.tcurr);
+ 
+  
+while (syst1.tcurr<30.){
     myfile<<syst1.tcurr<<",";
-    measure = syst1.get_measurement(syst1.Xcurr);
-	agK=systK.Xcurr.subvec(0,2);
+    agK=systK.Xcurr.subvec(0,2);
     myfile<<measure(0)<<","<<measure(1)<<","<<measure(2)<<",";
 	myfile<<agK(0)<<","<<agK(1)<<","<<agK(2)<<",";
     myfile<<syst1.Ucurr(0)<<","<<syst1.Ucurr(1)<<","<<mu(0)<<",";
-	myfile<<0.01*lqrK.l(systK.Xcurr,systK.Ucurr,systK.tcurr)<<"\n";
+	myfile<<0.001*lqrK.l(systK.Xcurr,systK.Ucurr,systK.tcurr)<<"\n";
 	syst1.step();
-	systK.update_XU(measure,syst1.Ucurr);
-	systK.calc_K();
-	lqrK.calc_gains(systK.Kx,systK.Ku);mu = lqrK.mu(systK.Xcurr,syst1.tcurr);
-	systK.step();
-	syst1.Ucurr = ALpol.ustar_calc(); //unom(systK.tcurr);
-    //sacsysK.unom_shift();
+	measure = syst1.get_measurement(syst1.Xcurr);//sample state
+	systK.calc_K(measure,syst1.Ucurr);//add to data set and update Kx, Ku
+	lqrK.calc_gains(systK.Kx,systK.Ku);//update lqr gain
+	mu = lqrK.mu(systK.Xcurr,syst1.tcurr);//this is just to record mu
+	systK.step();//this is just to record the model accuracy
+	syst1.Ucurr = ALpol.ustar_calc(); //compute ustar
+    
     if(fmod(syst1.tcurr,5)<syst1.dt)cout<<"Time: "<<syst1.tcurr<<"\n";
     } 
        
