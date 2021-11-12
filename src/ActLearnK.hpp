@@ -40,7 +40,8 @@ class alk {
   arma::mat xforward();//forward simulation of x
   arma::mat rhoback(const arma::mat& xsol); //backward simulation of the adjoint
   inline arma::vec f(const arma::vec& rho, xupair pair){
-  	return -cost->dldx(pair.x,pair.u,pair.t) - cost->dfdx(pair.x,pair.u).t()*rho;}//f for rho backwards sim
+  //cout<<cost->dldx(pair.x,pair.u,pair.t)<<endl;
+  	return -cost->dldx(pair.x,pair.u,pair.t) - cost->dfdx(pair.x,pair.u,pair.t).t()*rho;}//f for rho backwards sim
 	};
 
 //main function for calculating a single control vector
@@ -52,7 +53,7 @@ arma::vec alk<system,objective,policy>::ustar_calc(){
   xsol = xforward();
   rhosol = rhoback(xsol);  
   ustar = -Rinv*(sys->Ku*sys->zfuncs->dvdu(sys->Xcurr)).t()*rhosol.col(0)+pol->mu(sys->Xcurr,sys->tcurr);
-  //ustar=saturation(ustar);
+  //cout<<ustar<<endl;
 return saturation(ustar);}
     
 //forward simulation of x
@@ -78,8 +79,9 @@ arma::mat alk<system,objective,policy>::rhoback(const arma::mat& xsol){
     rhosol.col(i)=rho0;
     current.x =xsol.col(i);
     current.t = sys->tcurr+(double)i*sys->dt;
-	current.u = pol->mu(current.x,current.t);
-	rho0 = RK4_step<alk,xupair>(this,rho0,current,-1.0*sys->dt);
+	current.u = pol->mu(current.x,current.t);//cout<<current..t()<<endl;
+	//rho0 = RK4_step<alk,xupair>(this,rho0,current,-1.0*sys->dt);
+	rho0 = rho0-f(rho0,current)*sys->dt;
   } 
 return rhosol;}
 

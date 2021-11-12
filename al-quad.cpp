@@ -56,9 +56,9 @@ int main()
 	arma::mat Qf = arma::zeros<arma::mat>(size(Qk));
     arma::vec umax(size(syst1.Ucurr)); umax.fill(6);
  	arma::vec noisecov = 1.0*arma::ones(basisobj.xdim);
-	arma::mat Rtil = 0.1*arma::eye(systK.Ucurr.n_rows,systK.Ucurr.n_rows);
+	arma::mat Rtil = 1.*arma::eye(systK.Ucurr.n_rows,systK.Ucurr.n_rows);
 	//initialize lqr policy, fisher informaiton cost, and active learning controller
-	lqr lqrK(Qk, R,Qf,20,umax,xdk, DT);
+	lqr lqrK(Qk, R,Qf,round(T/DT),umax,xdk, DT);
 	fishcost<KoopSys<QuadBasis>,lqr> costFI (&systK,&lqrK,noisecov);
  	alk<KoopSys<QuadBasis>,fishcost<KoopSys<QuadBasis>,lqr>,lqr> 		
 							ALpol(&systK,&costFI,&lqrK,T,umax,Rtil);
@@ -70,31 +70,33 @@ int main()
  	//add initial conditions to state sample
  	measure = syst1.get_measurement(syst1.Xcurr);
  	systK.calc_K(measure,syst1.Ucurr);
- /*arma::mat kx = 5.*arma::eye(size(systK.Kx));
+/* arma::mat kx = 5.*arma::eye(size(systK.Kx));
  arma::mat ku = 5.*arma::eye(size(systK.Ku));
- lqrK.calc_gains(kx,ku);
- mu = lqrK.mu(systK.Xcurr,syst1.tcurr);
- cout<<basisobj.zx(systK.Xcurr)<<endl<<lqrK.K<<endl<<mu<<endl;*/
- 	lqrK.calc_gains(systK.Kx,systK.Ku);
+ systK.Kx=kx; systK.Ku=ku;
+ lqrK.calc_gains(kx,ku,systK.tcurr);
+ mu = ALpol.ustar_calc();*/
+ //cout<<mu<<endl;
+ 
+ 	lqrK.calc_gains(systK.Kx,systK.Ku,systK.tcurr);
  	mu = lqrK.mu(systK.Xcurr,syst1.tcurr);
  
   
-while (syst1.tcurr<30.){
+while (syst1.tcurr<10.){
     myfile<<syst1.tcurr<<",";
     agK=systK.Xcurr.subvec(0,2);
     myfile<<measure(0)<<","<<measure(1)<<","<<measure(2)<<",";
 	myfile<<agK(0)<<","<<agK(1)<<","<<agK(2)<<",";
     myfile<<syst1.Ucurr(0)<<","<<syst1.Ucurr(1)<<","<<mu(0)<<",";
-	myfile<<0.001*lqrK.l(systK.Xcurr,systK.Ucurr,systK.tcurr)<<"\n";
+	myfile<<arma::norm(basisobj.zx(measure)-xdk(systK.tcurr))<<"\n";
 	syst1.step();
 	measure = syst1.get_measurement(syst1.Xcurr);//sample state
 	systK.calc_K(measure,syst1.Ucurr);//add to data set and update Kx, Ku
-	lqrK.calc_gains(systK.Kx,systK.Ku);//update lqr gain
-	mu = lqrK.mu(systK.Xcurr,syst1.tcurr);//this is just to record mu
-	systK.step();//this is just to record the model accuracy
+	lqrK.calc_gains(systK.Kx,systK.Ku,systK.tcurr);//update lqr gain
+	mu = lqrK.mu(systK.Xcurr,systK.tcurr);//this is just to record mu
+	cout<<lqrK.K(systK.tcurr).clean(pow(10,-3));
 	syst1.Ucurr = ALpol.ustar_calc(); //compute ustar
-    
-    if(fmod(syst1.tcurr,5)<syst1.dt)cout<<"Time: "<<syst1.tcurr<<"\n";
+	systK.step();//this is just to record the model accuracy
+    if(fmod(syst1.tcurr,5)<syst1.dt)cout<<"Time: "<<syst1.tcurr<<endl<<systK.Xcurr<<"\n";
     } 
        
     myfile.close();

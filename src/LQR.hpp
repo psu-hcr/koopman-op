@@ -6,6 +6,7 @@
 class lqr {
   arma::mat A, B, Q, R, Rinv,Qf;//qf=arma::zeros()
   int horizon;// horizon = 20
+  double tcurr;
   std::function<arma::vec(double)> xd;
   arma::vec umax;
   void calc_gains();
@@ -23,11 +24,14 @@ class lqr {
   lqr(const arma::mat& _Q,const arma::mat& _R,const arma::mat& _Qf,int _horizon,const arma::vec& _umax, std::function<arma::vec(double)> _xd, double _dt){
     Q=_Q; R=_R; Rinv = _R.i(); Qf=_Qf; 
 	horizon = _horizon; umax = _umax; xd=_xd, dt = _dt;
+	xdim = xd(0).n_rows;udim = umax.n_rows;
+	Klist.zeros(udim*(horizon),xdim);//cout<<xd(0.)<<endl;
     };
-  arma::mat K;
-  void calc_gains(const arma::mat& _A,const arma::mat& _B);
+  arma::mat K(double ti);
+  arma::mat Klist;int xdim,udim;
+  void calc_gains(const arma::mat& _A,const arma::mat& _B, double tc);
   arma::vec mu(const arma::vec& _x,double ti);
-  arma::mat dmudz(const arma::vec& _x);
+  arma::mat dmudz(const arma::vec& _x,double ti);
   inline arma::mat f(const arma::mat& Pvec, int NA){
 	  arma::mat P = arma::reshape(Pvec,arma::size(Qf));
 	  arma::mat Pdot = -(A.t()*P + P*A - ((P*B)*Rinv)*(B.t()*P) + Q);
@@ -38,31 +42,41 @@ class lqr {
   return arma::as_scalar((x-xd(ti)).t()*Q*(x-xd(ti))+u.t()*R*u);}
   arma::vec dldx (const arma::vec& x,const arma::vec& u,double ti){
     return Q*(x-xd(ti));}
-  arma::vec dldu (const arma::vec& x,const arma::vec& u,double ti){
+  arma::vec dldu (const arma::vec& x,const arma::vec& u,double ti){//cout<<u<<endl;
     return R*u;}
   
   
 };
 
 
-void lqr::calc_gains(const arma::mat& _A,const arma::mat& _B){ 
+void lqr::calc_gains(const arma::mat& _A,const arma::mat& _B, double _tcurr){ 
 	A = _A; B=_B;//update Kx, Ku before recalculating gain
+	tcurr = _tcurr;//update current time to get correct K from list
 	arma::vec Pflat = Qf.as_col(); int na = 1.;
-	
-   for(int i = horizon-1;i>0;i--){
+	arma::mat P;
+   for(int i = horizon;i>0;i--){
+	   P = arma::reshape(Pflat,arma::size(Qf));
+	   Klist.submat(udim*i-udim,0,udim*i-1,xdim-1)=Rinv*B.t()*P;
 	   //Pflat = RK4_step<lqr,int>(this,Pflat,na,-1.0*dt);
 	   Pflat = Pflat - f(Pflat,i)*dt;
+	   //cout<<udim*i-udim<<","<<udim*i-1<<endl;
 	   
    	}
-	arma::mat P = arma::reshape(Pflat,arma::size(Qf));
-	K=Rinv*B.t()*P;
+	   //P = arma::reshape(Pflat,arma::size(Qf));
+	   //K=Rinv*B.t()*P;
+	
 return;}
 
-arma::vec lqr::mu(const arma::vec& _x, double ti){
-	return saturation(K*(_x-xd(ti)));
+arma::mat lqr::K(double ti){
+	int i = 0.;// round((ti-tcurr)/dt);//cout<<i<<","<<udim*i<<","<<udim*i+(udim-1)<<endl;
+	arma::mat Ki = Klist.submat(udim*i,0,udim*i+(udim-1),xdim-1);	
+return Ki;}
+
+arma::vec lqr::mu(const arma::vec& _x, double ti){//cout<<K(ti)<<endl;
+	return saturation(-K(ti)*(_x-xd(ti)));
 }
-arma::mat lqr::dmudz(const arma::vec& _x){
-  return K;
+arma::mat lqr::dmudz(const arma::vec& _x,double ti){
+  return -K(ti);
 }
 
 #endif

@@ -27,14 +27,15 @@ class fishcost {
        arma::vec dfdk = sys->zfuncs->zx(x);
 	  double fishTopt = arma::as_scalar(dfdk.t()*Sigma*dfdk);
 	  arma::vec dldz = ((-2.*infw)/pow(fishTopt+eps,2))*Sigma*dfdk+task->dldx(x,u,ti);
-	  return dldz+task->dmudz(x).t()*task->dldu(x,u,ti);
+		//cout<<(task->dldu(x,u,ti).t())<<endl;
+	  return dldz+task->dmudz(x,ti).t()*task->dldu(x,u,ti);
       }
 	inline arma::vec dldu (const arma::vec& x,const arma::vec& u,double ti){//REQUIREd 
     return task->dldu(x,u,ti);
       }
-	inline arma::mat dfdx (const arma::vec& x,const arma::vec& u){//required
-		
-		return sys->dfdx(x,u)+sys->hx(x)*task->dmudz(x);}
+	inline arma::mat dfdx (const arma::vec& x,const arma::vec& u,double ti){//required
+		//cout<<sys->hx(x)*task->dmudz(x,ti)<<endl;
+		return sys->dfdx(x,u)+sys->hx(x)*task->dmudz(x,ti);}
     double calc_cost(const arma::mat& x,const arma::mat& u){//REQUIRED:calculatetotal cost
       
       double J1 = 0.0;
