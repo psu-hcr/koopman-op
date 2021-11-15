@@ -24,8 +24,8 @@ arma::vec unom(double t){
         return arma::randn(4);};
 
 int main()
-{   arma::arma_rng::set_seed(50);//set seed for reproducibility
-	//arma::arma_rng::set_seed_random();
+{   //arma::arma_rng::set_seed(50);//set seed for reproducibility
+	arma::arma_rng::set_seed_random();
  	
 	ofstream myfile;
     myfile.open ("test.csv");
@@ -37,11 +37,11 @@ int main()
  	KoopSys<QuadBasis> systK (DT,&basisobj);
  	QuadRotor syst1 (DT);
 	//initialize states and control for both systems
-    syst1.Ucurr = {0.77,-0.77,-0.04,1.08}; systK.Ucurr = syst1.Ucurr;
- 	arma::vec anginit = {0.95,0.78,0.82};//(2*arma::randu<arma::vec>(3))-1;
+    syst1.Ucurr = arma::randn(4); systK.Ucurr = syst1.Ucurr;
+ 	arma::vec anginit = (2*arma::randu<arma::vec>(3))-1;
 	arma::mat Rinit = euler2R(anginit);
  	arma::vec pinit = {0.,0.,0.,1.};
- 	arma::vec Twistinit = {0.91,0.85,0.73,-0.52,0.52,0.74};//(2*arma::randu<arma::vec>(6))-1;
+ 	arma::vec Twistinit = (2*arma::randu<arma::vec>(6))-1;
  	arma::mat hinit; hinit.zeros(4,4);
  	hinit.submat(0,0,2,2) = Rinit; hinit.submat(0,3,3,3)=pinit;
 	
@@ -81,7 +81,7 @@ int main()
  	mu = lqrK.mu(systK.Xcurr,syst1.tcurr);
  
   
-while (syst1.tcurr<60.){
+while (syst1.tcurr<10.){
     myfile<<syst1.tcurr<<",";
     agK=systK.Xcurr.subvec(0,2);
     myfile<<measure(0)<<","<<measure(1)<<","<<measure(2)<<",";

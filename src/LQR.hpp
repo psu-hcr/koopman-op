@@ -71,6 +71,7 @@ arma::mat lqr::K(double ti){
 arma::vec lqr::mu(const arma::vec& _x, double ti){
 	return saturation(-K(tcurr)*(_x-xd(ti)));}
 arma::mat lqr::dmudz(const arma::vec& _x,double ti){
-  return -K(ti);}
+  return -K(ti);
+  }
 
 #endif
