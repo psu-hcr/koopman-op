@@ -35,3 +35,14 @@ An implemenetation of data-driven control using the Koopman Operator.
     $ ./build/errsac_koopcp
 
 - Data from the simulation is saved in a text file
+
+## Run an example of the active learning controller on a simulated quad-copter
+
+	$ ./build/al_quad
+	
+- Data from the simulation is saved in a text file. The control inputs are plotted and the body centered gravity vector is plotted in figure 1.
+
+### To set up your own active learning controller
+- You can use the basis template provided in this repo. 
+- See al-quad.cpp lines 51--64 for an example of how to instantiate the alk class from src/ActLearnK.hpp. 
+	

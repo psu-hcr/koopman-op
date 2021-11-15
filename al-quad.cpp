@@ -24,8 +24,8 @@ arma::vec unom(double t){
         return arma::randn(4);};
 
 int main()
-{   //arma::arma_rng::set_seed(50);//set seed for reproducibility
-	arma::arma_rng::set_seed_random();
+{   arma::arma_rng::set_seed(40);//set seed for reproducibility
+	//arma::arma_rng::set_seed_random();
  	
 	ofstream myfile;
     myfile.open ("test.csv");
@@ -81,13 +81,13 @@ int main()
  	mu = lqrK.mu(systK.Xcurr,syst1.tcurr);
  
   
-while (syst1.tcurr<10.){
+while (syst1.tcurr<20.){
     myfile<<syst1.tcurr<<",";
     agK=systK.Xcurr.subvec(0,2);
     myfile<<measure(0)<<","<<measure(1)<<","<<measure(2)<<",";
 	myfile<<agK(0)<<","<<agK(1)<<","<<agK(2)<<",";
     myfile<<syst1.Ucurr(0)<<","<<syst1.Ucurr(1)<<","<<mu(0)<<",";
-	myfile<<arma::norm(basisobj.zx(measure)-xdk(systK.tcurr))-10.<<"\n";
+	myfile<<arma::norm(basisobj.zx(measure)-xdk(systK.tcurr))-20.<<"\n";
 	syst1.step();
 	measure = syst1.get_measurement(syst1.Xcurr);//sample state
 	systK.calc_K(measure,syst1.Ucurr);//add to data set and update Kx, Ku
