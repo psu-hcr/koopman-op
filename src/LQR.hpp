@@ -26,7 +26,7 @@ class lqr {
     Q=_Q; R=_R; Rinv = _R.i(); Qf=_Qf; 
 	horizon = _horizon; umax = _umax; xd=_xd, dt = _dt;
 	xdim = xd(0).n_rows;udim = umax.n_rows;
-	Klist.zeros(udim*(horizon),xdim);//cout<<xd(0.)<<endl;
+	Klist.zeros(udim*(horizon),xdim);
     };
   arma::mat K(double ti);
   arma::mat Klist;int xdim,udim;
@@ -43,7 +43,7 @@ class lqr {
   return arma::as_scalar((x-xd(ti)).t()*Q*(x-xd(ti))+u.t()*R*u);}
   arma::vec dldx (const arma::vec& x,const arma::vec& u,double ti){
     return Q*(x-xd(ti));}
-  arma::vec dldu (const arma::vec& x,const arma::vec& u,double ti){//cout<<u<<endl;
+  arma::vec dldu (const arma::vec& x,const arma::vec& u,double ti){
     return R*u;}
   
   
@@ -60,25 +60,17 @@ void lqr::calc_gains(const arma::mat& _A,const arma::mat& _B, double _tcurr){
 	   Klist.submat(udim*i-udim,0,udim*i-1,xdim-1)=Rinv*B.t()*P;
 	   //Pflat = RK4_step<lqr,int>(this,Pflat,na,-1.0*dt);
 	   Pflat = Pflat - f(Pflat,i)*dt;
-	   //cout<<udim*i-udim<<","<<udim*i-1<<endl;
-	   
-   	}
-	   //P = arma::reshape(Pflat,arma::size(Qf));
-	   //K=Rinv*B.t()*P;
-	
+	   }
 return;}
 
 arma::mat lqr::K(double ti){
-	int i = round((ti-tcurr)/dt);//cout<<i<<","<<udim*i<<","<<udim*i+(udim-1)<<endl;
+	int i = round((ti-tcurr)/dt);
 	arma::mat Ki = Klist.submat(udim*i,0,udim*i+(udim-1),xdim-1);	
-return Ki;}
+	return Ki;}
 
 arma::vec lqr::mu(const arma::vec& _x, double ti){
-	//cout<<(-K(tcurr)*(_x-xd(ti))).t()<<endl;
-	return saturation(-K(tcurr)*(_x-xd(ti)));
-}
+	return saturation(-K(tcurr)*(_x-xd(ti)));}
 arma::mat lqr::dmudz(const arma::vec& _x,double ti){
-  return -K(ti);
-}
+  return -K(ti);}
 
 #endif

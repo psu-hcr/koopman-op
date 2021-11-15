@@ -53,7 +53,6 @@ inline arma::vec QuadRotor::f(const arma::vec& x, const arma::vec& u){//control 
 						{-omega(1),omega(0),0.,v(2)},
 						{0.,0.,0.,0.}};
 	arma::mat R = h.submat(0,0,2,2);
-	//h.submat(0,0,2,2)=R;
 	double F = kt*(u(0)+u(1)+u(2)+u(3));
 	arma::vec M = {kt*arml*(u(1)-u(3)),
 				   kt*arml*(u(2)-u(0)),
@@ -71,7 +70,7 @@ inline arma::vec QuadRotor::f(const arma::vec& x, const arma::vec& u){//control 
 inline arma::vec QuadRotor::get_measurement(const arma::vec& x){
 	arma::mat h = arma::reshape(x.subvec(0,15),4,4);
 	arma::vec twist = x.subvec(16,21);
-	arma::mat R = h.submat(0,0,2,2);//cout<<R.i()-R.t()<<endl;
+	arma::mat R = h.submat(0,0,2,2);
 	arma::vec ag = -g*R*e3;
 	arma::vec z = arma::join_cols(ag,twist);
 	return z;

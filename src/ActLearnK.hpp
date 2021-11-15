@@ -25,24 +25,20 @@ class alk {
     
   public:
   objective* cost; //from cost use cost->dldx, cost->calc_cost,cost->dfdx
-  //bool iterative=false;
   int T_index;
-  //arma::mat ulist;
-    
+      
   alk(system *_sys, objective *_cost,policy *_pol, double _T,const arma::vec& _umax,const arma::mat& _R){
     sys = _sys; cost=_cost; pol=_pol;T=_T;umax = _umax;
     T_index = T/sys->dt; Rinv = _R.i(); 
-    //ulist = arma::zeros(umax.n_rows,T_index); 
-    //for(int i = 0;i<ulist.n_cols-1;i++) ulist.col(i) = unom(sys->tcurr + (double)i*sys->dt);
-  };
+    };
     
   arma::vec ustar_calc();//main function for calculating the current action
   arma::mat xforward();//forward simulation of x
   arma::mat rhoback(const arma::mat& xsol); //backward simulation of the adjoint
   inline arma::vec f(const arma::vec& rho, xupair pair){
     arma::vec x = pair.x; arma::vec u = pair.u; double ti = pair.t;
-  	//cout<<cost->dldz(x,u,ti)<<endl;
-  	return -(cost->dldz(x,u,ti)+pol->dmudz(x,ti).t()*pol->dldu(x,u,ti)) -(sys->dfdx(x,u)+sys->hx(x)*pol->dmudz(x,ti)).t()*rho;
+  	return -(sys->dfdx(x,u)+sys->hx(x)*pol->dmudz(x,ti)).t()*rho
+		-(cost->dldz(x,u,ti)+pol->dmudz(x,ti).t()*pol->dldu(x,u,ti)) ;
 	}//f for rho backwards sim
 	};
 
@@ -54,8 +50,9 @@ arma::vec alk<system,objective,policy>::ustar_calc(){
   arma::mat xsol,rhosol;    
   xsol = xforward();
   rhosol = rhoback(xsol);  
-  ustar = -Rinv*(sys->Ku*sys->zfuncs->dvdu(sys->Xcurr)).t()*rhosol.col(0)+pol->mu(sys->Xcurr,sys->tcurr);
-  //cout<<ustar<<endl;cout<<(rhosol.col(T_index-2)).t()<<endl;
+  ustar = -Rinv*(sys->Ku*sys->zfuncs->dvdu(sys->Xcurr)).t()*rhosol.col(0)
+  		+pol->mu(sys->Xcurr,sys->tcurr);
+  
 return saturation(ustar);}
     
 //forward simulation of x
@@ -82,8 +79,8 @@ arma::mat alk<system,objective,policy>::rhoback(const arma::mat& xsol){
   rhosol.col(T_index-1)=rho0;
   for(int i = T_index-2; i>=0;i--){
     current.x =xsol.col(i);
-    current.t = sys->tcurr+(double)i*sys->dt;//cout<<"Time "<<current.t<<endl;
-	current.u = pol->mu(current.x,current.t);//cout<<current..t()<<endl;
+    current.t = sys->tcurr+(double)i*sys->dt;
+	current.u = pol->mu(current.x,current.t);
 	//rho0 = RK4_step<alk,xupair>(this,rho0,current,-1.0*sys->dt);
 	rho0 = rho0-f(rho0,current)*sys->dt;
 	rhosol.col(i)=rho0;

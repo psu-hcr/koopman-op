@@ -50,10 +50,8 @@ arma::vec KoopSys<basis>::proj_func (const arma::vec& x){
 }
 template<class basis>
 arma::vec KoopSys<basis>::f(const arma::vec& zx, const arma::vec& u){
-    //arma::vec zx = z.subvec(0,zfuncs->xdim-1);
     arma::vec zu = zfuncs->zu(zx,u);
-	//cout<<zu.t()<<endl;
-    arma::vec zdot = Kx*zx+Ku*zu;
+	arma::vec zdot = Kx*zx+Ku*zu;
     return zdot;
 }; 
 template<class basis>
