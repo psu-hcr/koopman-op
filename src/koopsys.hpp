@@ -52,6 +52,7 @@ template<class basis>
 arma::vec KoopSys<basis>::f(const arma::vec& zx, const arma::vec& u){
     //arma::vec zx = z.subvec(0,zfuncs->xdim-1);
     arma::vec zu = zfuncs->zu(zx,u);
+	//cout<<zu.t()<<endl;
     arma::vec zdot = Kx*zx+Ku*zu;
     return zdot;
 }; 
@@ -68,7 +69,7 @@ inline arma::mat KoopSys<basis>::hx(const arma::vec& z){
 }; 
 template<class basis>
 void KoopSys<basis>::step(){ 
-    Xcurr = RK4_step(this,Xcurr,Ucurr,dt);
+    Xcurr = Xcurr+f(Xcurr,Ucurr)*dt;//RK4_step(this,Xcurr,Ucurr,dt);
     tcurr = tcurr+dt;
 };
 
@@ -78,6 +79,7 @@ void KoopSys<basis>::update_XU(const arma::vec& x,const arma::vec& u){
     Ucurr = u;
     Xprev = Xcurr;
     Xcurr = zfuncs->zx(x);
+	tcurr = tcurr+dt;
     
 };
 template<class basis>
@@ -96,7 +98,7 @@ void KoopSys<basis>::calc_K(const arma::vec& x,const arma::vec& u){
 	}
 	arma::cx_mat Ktemp;
     try{
-    Ktemp=arma::logmat(Kdisc);
+    Ktemp=arma::logmat(Kdisc);// /dt;
     K=arma::real(Ktemp);
     }
     catch (...){cout<<"This is a problem."<<endl;

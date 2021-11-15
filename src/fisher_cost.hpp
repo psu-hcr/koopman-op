@@ -10,8 +10,9 @@ class fishcost {
 	objective* task;//uses task->l, task->dldx,task->dldu,task->dmudz
 	arma::mat Sigma;
 	double eps = pow(10,-5);
-	double infw = 100.;
+	
   public:
+	double infw = 100.;
     fishcost(system *_sys, objective *_task,const arma::vec SigDiag){
 		sys=_sys;task = _task;
 		Sigma = arma::diagmat(SigDiag);
@@ -23,12 +24,12 @@ class fishcost {
 	  double fishTopt = arma::as_scalar(dfdk.t()*Sigma*dfdk);
       return (infw*1.)/(fishTopt+eps)+task->l(x,u,ti);
       }
-    inline arma::vec dldx (const arma::vec& x,const arma::vec& u,double ti){//REQUIRED
+    inline arma::vec dldz (const arma::vec& x,const arma::vec& u,double ti){//REQUIRED
        arma::vec dfdk = sys->zfuncs->zx(x);
 	  double fishTopt = arma::as_scalar(dfdk.t()*Sigma*dfdk);
-	  arma::vec dldz = ((-2.*infw)/pow(fishTopt+eps,2))*Sigma*dfdk+task->dldx(x,u,ti);
-		//cout<<(task->dldu(x,u,ti).t())<<endl;
-	  return dldz+task->dmudz(x,ti).t()*task->dldu(x,u,ti);
+	  arma::vec dldx = ((-2.*infw)/pow(fishTopt+eps,2))*Sigma*dfdk+task->dldx(x,u,ti);
+		//cout<<x.t()<<endl;
+	  return dldx;
       }
 	inline arma::vec dldu (const arma::vec& x,const arma::vec& u,double ti){//REQUIREd 
     return task->dldu(x,u,ti);

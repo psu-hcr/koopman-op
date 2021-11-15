@@ -7,7 +7,7 @@ class lqr {
   arma::mat A, B, Q, R, Rinv,Qf;//qf=arma::zeros()
   int horizon;// horizon = 20
   double tcurr;
-  std::function<arma::vec(double)> xd;
+  
   arma::vec umax;
   void calc_gains();
   double dt;
@@ -21,6 +21,7 @@ class lqr {
     return usat;}
       
   public: 
+	std::function<arma::vec(double)> xd;
   lqr(const arma::mat& _Q,const arma::mat& _R,const arma::mat& _Qf,int _horizon,const arma::vec& _umax, std::function<arma::vec(double)> _xd, double _dt){
     Q=_Q; R=_R; Rinv = _R.i(); Qf=_Qf; 
 	horizon = _horizon; umax = _umax; xd=_xd, dt = _dt;
@@ -68,12 +69,13 @@ void lqr::calc_gains(const arma::mat& _A,const arma::mat& _B, double _tcurr){
 return;}
 
 arma::mat lqr::K(double ti){
-	int i = 0.;// round((ti-tcurr)/dt);//cout<<i<<","<<udim*i<<","<<udim*i+(udim-1)<<endl;
+	int i = round((ti-tcurr)/dt);//cout<<i<<","<<udim*i<<","<<udim*i+(udim-1)<<endl;
 	arma::mat Ki = Klist.submat(udim*i,0,udim*i+(udim-1),xdim-1);	
 return Ki;}
 
-arma::vec lqr::mu(const arma::vec& _x, double ti){//cout<<K(ti)<<endl;
-	return saturation(-K(ti)*(_x-xd(ti)));
+arma::vec lqr::mu(const arma::vec& _x, double ti){
+	//cout<<(-K(tcurr)*(_x-xd(ti))).t()<<endl;
+	return saturation(-K(tcurr)*(_x-xd(ti)));
 }
 arma::mat lqr::dmudz(const arma::vec& _x,double ti){
   return -K(ti);
