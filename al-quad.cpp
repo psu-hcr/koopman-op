@@ -28,7 +28,7 @@ int main()
 	//arma::arma_rng::set_seed_random();
  	
 	ofstream myfile;
-    myfile.open ("test.csv");
+    myfile.open ("al-quad.csv");
  
 	double DT = 1./200.;
 	double T = 0.1;

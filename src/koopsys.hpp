@@ -100,8 +100,8 @@ void KoopSys<basis>::calc_K(const arma::vec& x,const arma::vec& u){
     K=arma::real(Ktemp);
     }
     catch (...){cout<<"This is a problem."<<endl;
-    //K = 0.1*arma::ones<arma::mat>(zfuncs->zdim,zfuncs->zdim);
-	K = arma::randn<arma::mat>(zfuncs->zdim,zfuncs->zdim);
+    K = 0.1*arma::ones<arma::mat>(zfuncs->zdim,zfuncs->zdim);
+	//K = arma::randn<arma::mat>(zfuncs->zdim,zfuncs->zdim);
     }
     Kx = K.submat(0,0,zfuncs->xdim-1, zfuncs->xdim-1);
     Ku = K.submat(0,zfuncs->xdim,zfuncs->xdim-1,K.n_cols-1);
