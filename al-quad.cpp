@@ -37,11 +37,12 @@ int main()
  	KoopSys<QuadBasis> systK (DT,&basisobj);
  	QuadRotor syst1 (DT);
 	//initialize states and control for both systems
-    syst1.Ucurr = arma::randn(4); systK.Ucurr = syst1.Ucurr;
- 	arma::vec anginit = (2*arma::randu<arma::vec>(3))-1;
+    syst1.Ucurr = {0.77,-0.77,-0.04,1.08};//arma::randn(4); 
+    systK.Ucurr = syst1.Ucurr;
+ 	arma::vec anginit = {0.95,0.78,0.82};//(2*arma::randu<arma::vec>(3))-1;
 	arma::mat Rinit = euler2R(anginit);
  	arma::vec pinit = {0.,0.,0.,1.};
- 	arma::vec Twistinit = (2*arma::randu<arma::vec>(6))-1;
+ 	arma::vec Twistinit = {-0.463,0.7224,-0.2225,-0.2129,-0.2642, 0.9124};// (2*arma::randu<arma::vec>(6))-1;
  	arma::mat hinit; hinit.zeros(4,4);
  	hinit.submat(0,0,2,2) = Rinit; hinit.submat(0,3,3,3)=pinit;
 	
@@ -74,7 +75,7 @@ int main()
  arma::mat ku = 5.*arma::eye(size(systK.Ku));
  systK.Kx=kx; systK.Ku=ku;
  lqrK.calc_gains(kx,ku,systK.tcurr);
- mu = ALpol.ustar_calc();
+  mu = ALpol.ustar_calc();
  //cout<<mu<<endl;*/
  
 	lqrK.calc_gains(systK.Kx,systK.Ku,systK.tcurr);
