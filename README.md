@@ -45,7 +45,7 @@ An implemenetation of data-driven control using the Koopman Operator.
 	$ ./build/al_quad
 	
 - Data from the simulation is saved in a csv file. 
-- Data can be ploted in quad-plot.py. The control inputs are plotted and the body centered gravity vector is plotted in figure 1.
+- Data can be ploted in quad-plot.py. The body centered gravity vector is plotted in figure 1 and control inputs are plotted in figure 2.
 
 ### To set up your own active learning controller
 - You can use the basis template provided in this repo. 

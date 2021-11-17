@@ -68,13 +68,14 @@ int main()
     myfile<<syst1.Ucurr(0)<<","<<syst1.Ucurr(1)<<","<<syst1.Ucurr(2)<<",";
 	myfile<<arma::norm(basisobj.zx(measure)-xdk(systK.tcurr))-10.<<"\n";
 	syst1.step();
+	/*
 	measure = syst1.get_measurement(syst1.Xcurr);//sample state
 	systK.calc_K(measure,syst1.Ucurr);//add to data set and update Kx, Ku
 	//systK.step();
 	sacsysK.SAC_calc();
 	syst1.Ucurr = sacsysK.ulist.col(0); 
     sacsysK.unom_shift();
-    if(fmod(syst1.tcurr,5)<syst1.dt)cout<<"Time: "<<syst1.tcurr<<"\n";
+    if(fmod(syst1.tcurr,5)<syst1.dt)cout<<"Time: "<<syst1.tcurr<<"\n";*/
     } 
        
     myfile.close();
