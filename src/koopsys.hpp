@@ -11,7 +11,7 @@ class KoopSys {
 	
     arma::mat A;
     arma::mat G;
-    double Mindex=1;
+    double Mindex=0;
     arma::mat Kdisc;
     //arma::mat Kx,Ku;
     public:
@@ -84,26 +84,22 @@ template<class basis>
 void KoopSys<basis>::calc_K(const arma::vec& x,const arma::vec& u){
 	Mindex++;
 	update_XU(x,u);
-    arma::vec ztplus1 = zfuncs->zxu(Xcurr,Ucurr);
-    arma::vec zt = zfuncs->zxu(Xprev,Uprev);
-    A = A + (ztplus1*zt.t()-A)/Mindex;
-    G = G + (zt*zt.t()-G)/Mindex;
+    arma::vec ztplus1 = zfuncs->zxu(Xcurr,Uprev);
+    arma::vec zt = zfuncs->zxu(Xprev,Uprev);//cout<<ztplus1.t()<<endl;
+    A = A + (ztplus1*zt.t()-A)/Mindex;//cout<<A<<endl;
+    G = G + (zt*zt.t()-G)/Mindex;//cout<<G<<endl;
 	try{
     Kdisc=A*arma::pinv(G);
-	}
-	catch(...){cout<<"pinv failed"<<endl;
 	K = arma::randn<arma::mat>(zfuncs->zdim,zfuncs->zdim);
-	}
 	arma::cx_mat Ktemp;
-    try{
-    Ktemp=arma::logmat(Kdisc);// /dt;
-    K=arma::real(Ktemp);
+    Ktemp=arma::logmat(Kdisc);//dt;
+    K=arma::real(Ktemp);//cout<<K<<endl;
     }
-    catch (...){cout<<"This is a problem."<<endl;
+    catch (...){//cout<<"This is a problem."<<endl;
     //K = 0.1*arma::ones<arma::mat>(zfuncs->zdim,zfuncs->zdim);
 	K = arma::randn<arma::mat>(zfuncs->zdim,zfuncs->zdim);
     }
-    Kx = K.submat(0,0,zfuncs->xdim-1, zfuncs->xdim-1);
+    Kx = K.submat(0,0,zfuncs->xdim-1, zfuncs->xdim-1);//cout<<Kx<<endl;
     Ku = K.submat(0,zfuncs->xdim,zfuncs->xdim-1,K.n_cols-1);
 };
 

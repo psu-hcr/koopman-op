@@ -22,8 +22,8 @@ arma::vec unom(double t){
 		return arma::randn(4);};
 
 int main()
-{   arma::arma_rng::set_seed(50);//set seed for reproducibility
-	//arma::arma_rng::set_seed_random();
+{   //arma::arma_rng::set_seed(50);//set seed for reproducibility
+	arma::arma_rng::set_seed_random();
  	
 	ofstream myfile;
     myfile.open ("test.csv");
