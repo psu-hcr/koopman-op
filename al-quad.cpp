@@ -21,14 +21,14 @@ arma::vec xdk(double t){//should match xdim defined in basis
 		ref(2) = -9.81;
         return ref;};
 arma::vec unom(double t){
-        return arma::randn(4);};
+        return (0.2*arma::randu<arma::vec>(4))-0.1;};
 
 int main()
 {   arma::arma_rng::set_seed(40);//set seed for reproducibility
 	//arma::arma_rng::set_seed_random();
  	
 	ofstream myfile;
-    myfile.open ("al-quad.csv");
+    myfile.open ("test.csv");
  
 	double DT = 1./200.;
 	double T = 0.1;
@@ -42,7 +42,7 @@ int main()
  	arma::vec anginit = {0.95,0.78,0.82};//(2*arma::randu<arma::vec>(3))-1;
 	arma::mat Rinit = euler2R(anginit);
  	arma::vec pinit = {0.,0.,0.,1.};
- 	arma::vec Twistinit = {-0.463,0.7224,-0.2225,-0.2129,-0.2642, 0.9124};// (2*arma::randu<arma::vec>(6))-1;
+ 	arma::vec Twistinit ={-0.463,0.7224,-0.2225,-0.2129,-0.2642, 0.9124};//{0.91,0.85,0.73,-0.52,0.52,0.74};// (2*arma::randu<arma::vec>(6))-1;
  	arma::mat hinit; hinit.zeros(4,4);
  	hinit.submat(0,0,2,2) = Rinit; hinit.submat(0,3,3,3)=pinit;
 	
@@ -70,14 +70,19 @@ int main()
  
  	//add initial conditions to state sample
  	measure = syst1.get_measurement(syst1.Xcurr);
- 	systK.calc_K(measure,syst1.Ucurr);
- /*arma::mat kx = 5.*arma::eye(size(systK.Kx));
- arma::mat ku = 5.*arma::eye(size(systK.Ku));
+ 	systK.update_XU(measure,syst1.Ucurr);
+ /*arma::mat kx = 5.*arma::eye(18,18);
+ arma::mat ku = 5.*arma::eye(18,4);
  systK.Kx=kx; systK.Ku=ku;
  lqrK.calc_gains(kx,ku,systK.tcurr);
-  mu = ALpol.ustar_calc();
+syst1.Ucurr = ALpol.ustar_calc();//cout<<syst1.Ucurr<<endl;
+syst1.step();
+measure = syst1.get_measurement(syst1.Xcurr);//sample state
+systK.calc_K(measure,syst1.Ucurr);
  //cout<<mu<<endl;*/
- 
+ 	
+ 	systK.Kx = arma::randn<arma::mat>(basisobj.xdim,basisobj.xdim);
+ 	systK.Ku = arma::randn<arma::mat>(basisobj.xdim,basisobj.zdim-basisobj.xdim);
 	lqrK.calc_gains(systK.Kx,systK.Ku,systK.tcurr);
  	mu = lqrK.mu(systK.Xcurr,syst1.tcurr);
  
@@ -95,6 +100,9 @@ while (syst1.tcurr<20.){
 	lqrK.calc_gains(systK.Kx,systK.Ku,systK.tcurr);//update lqr gain
 	mu = lqrK.mu(systK.Xcurr,systK.tcurr);//this is just to record mu
 	syst1.Ucurr = ALpol.ustar_calc(); //compute ustar
+	if(syst1.Ucurr(0)!=syst1.Ucurr(0)){cout<<"returned a nan"<<endl;
+		syst1.Ucurr = unom(syst1.tcurr);
+	}
 	//systK.step();//this is just to record the model accuracy
     if(fmod(syst1.tcurr,2)<syst1.dt)cout<<"Time: "<<syst1.tcurr<<endl<<
 		(systK.Xcurr).t()<<"\n";
@@ -104,7 +112,7 @@ while (syst1.tcurr<20.){
     myfile.close();
  
  ofstream coeff;
- coeff.open("CP-koopman.csv");
+ coeff.open("quad-koopman.csv");
  systK.K.save(coeff,arma::csv_ascii);
  coeff.close();
 }

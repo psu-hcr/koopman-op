@@ -22,8 +22,8 @@ arma::vec unom(double t){
 		return arma::randn(4);};
 
 int main()
-{   arma::arma_rng::set_seed(50);//set seed for reproducibility
-	//arma::arma_rng::set_seed_random();
+{   //arma::arma_rng::set_seed(50);//set seed for reproducibility
+	arma::arma_rng::set_seed_random();
  	
 	ofstream myfile;
     myfile.open ("test.csv");
@@ -71,7 +71,7 @@ int main()
 	measure = syst1.get_measurement(syst1.Xcurr);//sample state
 	systK.calc_K(measure,syst1.Ucurr);//add to data set and update Kx, Ku
 	//systK.step();
-	sacsysK.SAC_calc();														//error is in here
+	sacsysK.SAC_calc();
 	syst1.Ucurr = sacsysK.ulist.col(0); 
     sacsysK.unom_shift();
     if(fmod(syst1.tcurr,5)<syst1.dt)cout<<"Time: "<<syst1.tcurr<<"\n";
