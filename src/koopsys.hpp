@@ -38,7 +38,8 @@ KoopSys<basis>::KoopSys (double _dt, basis *_zfuncs){
     dt = _dt;//step size
     A = arma::zeros(zfuncs->zdim,zfuncs->zdim);
     G = arma::zeros(zfuncs->zdim,zfuncs->zdim);
-    K = arma::randn<arma::mat>(zfuncs->zdim,zfuncs->zdim);
+	K = 0.1*arma::ones<arma::mat>(zfuncs->zdim,zfuncs->zdim);
+    //K = arma::randn<arma::mat>(zfuncs->zdim,zfuncs->zdim);
     //Kx = arma::eye(zfuncs->xdim,zfuncs->xdim);
     //Ku = arma::eye(zfuncs->udim,zfuncs->udim);
     
@@ -90,14 +91,15 @@ void KoopSys<basis>::calc_K(const arma::vec& x,const arma::vec& u){
     G = G + (zt*zt.t()-G)/Mindex;//cout<<G<<endl;
 	try{
     Kdisc=A*arma::pinv(G);
-	K = arma::randn<arma::mat>(zfuncs->zdim,zfuncs->zdim);
+	K = 0.1*arma::ones<arma::mat>(zfuncs->zdim,zfuncs->zdim);
+	//K = arma::randn<arma::mat>(zfuncs->zdim,zfuncs->zdim);
 	arma::cx_mat Ktemp;
     Ktemp=arma::logmat(Kdisc);//dt;
     K=arma::real(Ktemp);//cout<<K<<endl;
     }
     catch (...){//cout<<"This is a problem."<<endl;
-    //K = 0.1*arma::ones<arma::mat>(zfuncs->zdim,zfuncs->zdim);
-	K = arma::randn<arma::mat>(zfuncs->zdim,zfuncs->zdim);
+    K = 0.1*arma::ones<arma::mat>(zfuncs->zdim,zfuncs->zdim);
+	//K = arma::randn<arma::mat>(zfuncs->zdim,zfuncs->zdim);
     }
     Kx = K.submat(0,0,zfuncs->xdim-1, zfuncs->xdim-1);//cout<<Kx<<endl;
     Ku = K.submat(0,zfuncs->xdim,zfuncs->xdim-1,K.n_cols-1);
