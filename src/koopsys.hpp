@@ -91,24 +91,15 @@ void KoopSys<basis>::calc_K(const arma::vec& x,const arma::vec& u){
     G = G + (zt*zt.t()-G)/Mindex;//cout<<G<<endl;
 	try{
     Kdisc=A*arma::pinv(G);
-<<<<<<< HEAD
 	K = 0.1*arma::ones<arma::mat>(zfuncs->zdim,zfuncs->zdim);
 	//K = arma::randn<arma::mat>(zfuncs->zdim,zfuncs->zdim);
-=======
-	K = arma::randn<arma::mat>(zfuncs->zdim,zfuncs->zdim);
->>>>>>> f1aaaf87bec320e59b8ad2712dd7d468559822b9
 	arma::cx_mat Ktemp;
     Ktemp=arma::logmat(Kdisc);//dt;
     K=arma::real(Ktemp);//cout<<K<<endl;
     }
     catch (...){//cout<<"This is a problem."<<endl;
-<<<<<<< HEAD
     K = 0.1*arma::ones<arma::mat>(zfuncs->zdim,zfuncs->zdim);
 	//K = arma::randn<arma::mat>(zfuncs->zdim,zfuncs->zdim);
-=======
-    //K = 0.1*arma::ones<arma::mat>(zfuncs->zdim,zfuncs->zdim);
-	K = arma::randn<arma::mat>(zfuncs->zdim,zfuncs->zdim);
->>>>>>> f1aaaf87bec320e59b8ad2712dd7d468559822b9
     }
     Kx = K.submat(0,0,zfuncs->xdim-1, zfuncs->xdim-1);//cout<<Kx<<endl;
     Ku = K.submat(0,zfuncs->xdim,zfuncs->xdim-1,K.n_cols-1);
