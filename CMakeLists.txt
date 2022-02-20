@@ -11,7 +11,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 set(EXECUTABLE_OUTPUT_PATH build/)
+<<<<<<< HEAD
 include_directories(${ARMADILLO_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} ${OpenMP_INCLUDE_DIRS} "/home/lu/koopman-op")
+=======
+include_directories(${ARMADILLO_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} ${OpenMP_INCLUDE_DIRS} "/home/zxl5344/IROS2022/src/iiwa_ros/koopman-op")
+>>>>>>> f1aaaf87bec320e59b8ad2712dd7d468559822b9
 
 set(EXECUTABLE_OUTPUT_PATH build/)
 
