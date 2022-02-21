@@ -53,7 +53,7 @@ int main()
  	arma::mat R = arma::eye(syst1.Ucurr.n_rows,syst1.Ucurr.n_rows);
  	arma::mat Qk = arma::zeros(basisobj.xdim,basisobj.xdim);
 	arma::vec Qvec = {1,1,1,1,1,1,5,5,5};
- 	Qk.submat(0,0,8,8)=10*arma::diagmat(Qvec);
+ 	Qk.submat(0,0,8,8)=1*arma::diagmat(Qvec);
 	arma::mat Qf = arma::zeros<arma::mat>(size(Qk));
     arma::vec umax(size(syst1.Ucurr)); umax.fill(6);
  	arma::vec noisecov = 1.0*arma::ones(basisobj.xdim);
@@ -87,13 +87,14 @@ systK.calc_K(measure,syst1.Ucurr);
  	mu = lqrK.mu(systK.Xcurr,syst1.tcurr);
  
   
-while (syst1.tcurr<20.){
+while (syst1.tcurr<60.){
     myfile<<syst1.tcurr<<",";
     agK=systK.Xcurr.subvec(0,2);
     myfile<<measure(0)<<","<<measure(1)<<","<<measure(2)<<",";
 	myfile<<agK(0)<<","<<agK(1)<<","<<agK(2)<<",";
-    myfile<<syst1.Ucurr(0)<<","<<syst1.Ucurr(1)<<","<<mu(0)<<",";
-	myfile<<arma::norm(basisobj.zx(measure)-xdk(systK.tcurr))-20.<<"\n";
+    myfile<<mu(0)<<","<<mu(1)<<","<<mu(3)<<",";
+	//myfile<<arma::norm(systK.Xcurr-xdk(systK.tcurr))-20<<"\n";
+	myfile<<0.01*lqrK.l(systK.Xcurr,systK.Ucurr,systK.tcurr)<<"\n";
 	syst1.step();
 	measure = syst1.get_measurement(syst1.Xcurr);//sample state
 	systK.calc_K(measure,syst1.Ucurr);//add to data set and update Kx, Ku
@@ -107,7 +108,7 @@ while (syst1.tcurr<20.){
     if(fmod(syst1.tcurr,2)<syst1.dt)cout<<"Time: "<<syst1.tcurr<<endl<<
 		(systK.Xcurr).t()<<"\n";
     }
- 	costFI.infw = 100.0 * pow(0.99,systK.tcurr);
+ 	//costFI.infw = 100.0 * pow(0.99,systK.tcurr);
        
     myfile.close();
  
