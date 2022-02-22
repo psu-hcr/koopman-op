@@ -22,12 +22,13 @@ class lqr {
       
   public: 
 	std::function<arma::vec(double)> xd;
-  lqr(const arma::mat& _Q,const arma::mat& _R,const arma::mat& _Qf,int _horizon,const arma::vec& _umax, std::function<arma::vec(double)> _xd, double _dt){
-    Q=_Q; R=_R; Rinv = _R.i(); Qf=_Qf; 
-	horizon = _horizon; umax = _umax; xd=_xd, dt = _dt;
-	xdim = xd(0).n_rows;udim = umax.n_rows;
-	Klist.zeros(udim*(horizon),xdim);
+  	lqr(const arma::mat& _Q,const arma::mat& _R,const arma::mat& _Qf,int _horizon,const arma::vec& _umax, std::function<arma::vec(double)> _xd, double _dt){
+    	Q=_Q; R=_R; Rinv = _R.i(); Qf=_Qf; 
+		horizon = _horizon; umax = _umax; xd=_xd, dt = _dt;
+		xdim = xd(0).n_rows;udim = umax.n_rows;
+		Klist.zeros(udim*(horizon),xdim);
     };
+  
   arma::mat K(double ti);
   arma::mat Klist;int xdim,udim;
   void calc_gains(const arma::mat& _A,const arma::mat& _B, double tc);
@@ -35,7 +36,7 @@ class lqr {
   arma::mat dmudz(const arma::vec& _x,double ti);
   inline arma::mat f(const arma::mat& Pvec, int NA){
 	  arma::mat P = arma::reshape(Pvec,arma::size(Qf));
-	  arma::mat Pdot = -(A.t()*P + P*A - ((P*B)*Rinv)*(B.t()*P) + Q);
+	  arma::mat Pdot = -(A.t()*P + P*A - ((P*B)*Rinv)*(B.t()*P) + Q); //std::cout<<Pdot;
 	  return Pdot.as_col();
   	}//f for backwards sim in Ricatti eqtn
 	//function below required for active learning integration with this policy
@@ -57,7 +58,7 @@ void lqr::calc_gains(const arma::mat& _A,const arma::mat& _B, double _tcurr){
 	arma::mat P;
    for(int i = horizon;i>0;i--){
 	   P = arma::reshape(Pflat,arma::size(Qf));
-	   Klist.submat(udim*i-udim,0,udim*i-1,xdim-1)=Rinv*B.t()*P;
+	   Klist.submat(udim*i-udim,0,udim*i-1,xdim-1)=Rinv*B.t()*P; 
 	   //Pflat = RK4_step<lqr,int>(this,Pflat,na,-1.0*dt);
 	   Pflat = Pflat - f(Pflat,i)*dt;
 	   }
@@ -65,7 +66,7 @@ return;}
 
 arma::mat lqr::K(double ti){
 	int i = round((ti-tcurr)/dt);
-	arma::mat Ki = Klist.submat(udim*i,0,udim*i+(udim-1),xdim-1);
+	arma::mat Ki = Klist.submat(udim*i,0,udim*i+(udim-1),xdim-1);	
 	return Ki;}
 
 arma::vec lqr::mu(const arma::vec& _x, double ti){

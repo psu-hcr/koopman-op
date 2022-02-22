@@ -87,7 +87,7 @@ systK.calc_K(measure,syst1.Ucurr);
  	mu = lqrK.mu(systK.Xcurr,syst1.tcurr);
  
   
-while (syst1.tcurr<60.){
+while (syst1.tcurr<100.){
     myfile<<syst1.tcurr<<",";
     agK=systK.Xcurr.subvec(0,2);
     myfile<<measure(0)<<","<<measure(1)<<","<<measure(2)<<",";

@@ -3,6 +3,7 @@
 #include<armadillo>
 #include <iostream>
 #include"xustruct.hpp"
+using namespace std;
 
 
 template <class system, class objective,class policy>
@@ -35,25 +36,33 @@ class alk {
   arma::vec ustar_calc();//main function for calculating the current action
   arma::mat xforward();//forward simulation of x
   arma::mat rhoback(const arma::mat& xsol); //backward simulation of the adjoint
+  
   inline arma::vec f(const arma::vec& rho, xupair pair){
     arma::vec x = pair.x; arma::vec u = pair.u; double ti = pair.t;
+	
+	//cout<<"sys->dfdx(x,u)"<<sys->dfdx(x,u)<<endl;
+	//cout<<"sys->hx(x)"<<sys->hx(x)<<endl;
+	//cout<<"pol->dmudz(x,ti)"<<pol->dmudz(x,ti)<<endl;
+	//cout<<"cost->dldz(x,u,ti)"<<cost->dldz(x,u,ti)<<endl;
+	//cout<<"pol->dldu(x,u,ti)"<<pol->dldu(x,u,ti)<<endl;
+	
   	return -(sys->dfdx(x,u)+sys->hx(x)*pol->dmudz(x,ti)).t()*rho
 		-(cost->dldz(x,u,ti)+pol->dmudz(x,ti).t()*pol->dldu(x,u,ti)) ;
 	}//f for rho backwards sim
-	};
+};
 
 //main function for calculating a single control vector
 template <class system, class objective,class policy>
 arma::vec alk<system,objective,policy>::ustar_calc(){ 
   arma::vec ustar;
-  ustar = arma::zeros<arma::vec>(size(sys->Ucurr));
+  ustar = arma::zeros<arma::vec>(size(sys->Ucurr)); //cout<<"ustar define"<<endl;
   arma::mat xsol,rhosol;    
-  xsol = xforward();
-  rhosol = rhoback(xsol);  
-  ustar = -Rinv*(sys->Ku*sys->zfuncs->dvdu(sys->Xcurr)).t()*rhosol.col(0)
-  		+pol->mu(sys->Xcurr,sys->tcurr);
-  
-return saturation(ustar);}
+  xsol = xforward(); //cout<<"xsol"<<endl;
+  rhosol = rhoback(xsol); //cout<<"rhosol"<<endl;
+  //std::cout<<sys->Ku<<" "<<sys->zfuncs->dvdu(sys->Xcurr);
+  ustar = -Rinv*(sys->Ku*sys->zfuncs->dvdu(sys->Xcurr)).t()*rhosol.col(0)+pol->mu(sys->Xcurr,sys->tcurr);          //cout<<"ustar"<<endl;
+  return saturation(ustar);
+};
     
 //forward simulation of x
 template <class system, class objective,class policy>
@@ -76,14 +85,17 @@ arma::mat alk<system,objective,policy>::rhoback(const arma::mat& xsol){
   arma::vec rho0 = sys->Xcurr;
   xupair current;
   rho0.zeros();
-  rhosol.col(T_index-1)=rho0;
+  rhosol.col(T_index-1)=rho0;	//cout<<"rhosol.col"<<endl;
   for(int i = T_index-2; i>=0;i--){
-    current.x =xsol.col(i);
-    current.t = sys->tcurr+(double)i*sys->dt;
-	current.u = pol->mu(current.x,current.t);
+  	//cout<<"i_rho"<<i<<endl;
+    current.x =xsol.col(i);	//cout<<"current.x"<<endl;
+    current.t = sys->tcurr+(double)i*sys->dt; //cout<<"current.t"<<endl;
+	current.u = pol->mu(current.x,current.t); //cout<<"current.u"<<endl;
 	//rho0 = RK4_step<alk,xupair>(this,rho0,current,-1.0*sys->dt);
-	rho0 = rho0-f(rho0,current)*sys->dt;
-	rhosol.col(i)=rho0;
+	//cout<<"rho0"<<rho0<<endl;
+	//cout<<"f(rho0,current)"<<f(rho0,current)<<endl;
+	rho0 = rho0-f(rho0,current)*sys->dt; //cout<<"rho0"<<endl;
+	rhosol.col(i)=rho0; 
   } 
 return rhosol;}
 
