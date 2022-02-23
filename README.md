@@ -29,18 +29,23 @@ An implemenetation of data-driven control using the Koopman Operator.
 ## Run a simple example of a cart-pendulum that builds a Koopman operator model of the system
 
     $ ./build/errsac_cp
+	
+- Data from the simulation is saved in a csv file
+- Data can be ploted by using cp-plot.py
 
 ## Run a simple example of a cart-pendulum that builds a Koopman operator and uses it to calculate a SAC controller
 
     $ ./build/errsac_koopcp
 
-- Data from the simulation is saved in a text file
+- Data from the simulation is saved in a csv file
+- Data can be ploted by using cp-plot.py
 
 ## Run an example of the active learning controller on a simulated quad-copter
 
 	$ ./build/al_quad
 	
-- Data from the simulation is saved in a text file. The control inputs are plotted and the body centered gravity vector is plotted in figure 1.
+- Data from the simulation is saved in a csv file. 
+- Data can be ploted in quad-plot.py. The body centered gravity vector is plotted in figure 1 and control inputs are plotted in figure 2.
 
 ### To set up your own active learning controller
 - You can use the basis template provided in this repo. 

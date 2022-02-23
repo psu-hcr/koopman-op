@@ -21,10 +21,11 @@ arma::vec xdk(double t){//should match xdim defined in basis
 		ref(2) = -9.81;
         return ref;};
 arma::vec unom(double t){
-        return (0.2*arma::randu<arma::vec>(4))-0.1;};
+        //return (0.2*arma::randu<arma::vec>(4))-0.1;};
+		return (0.2*arma::ones<arma::vec>(4))-0.1;};
 
 int main()
-{   arma::arma_rng::set_seed(40);//set seed for reproducibility
+{   //arma::arma_rng::set_seed(30);//set seed for reproducibility
 	//arma::arma_rng::set_seed_random();
  	
 	ofstream myfile;
@@ -81,8 +82,10 @@ measure = syst1.get_measurement(syst1.Xcurr);//sample state
 systK.calc_K(measure,syst1.Ucurr);
  //cout<<mu<<endl;*/
  	
- 	systK.Kx = arma::randn<arma::mat>(basisobj.xdim,basisobj.xdim);
- 	systK.Ku = arma::randn<arma::mat>(basisobj.xdim,basisobj.zdim-basisobj.xdim);
+ 	//systK.Kx = arma::randn<arma::mat>(basisobj.xdim,basisobj.xdim);
+	systK.Kx = arma::ones<arma::mat>(basisobj.xdim,basisobj.xdim);
+ 	//systK.Ku = arma::randn<arma::mat>(basisobj.xdim,basisobj.zdim-basisobj.xdim);
+	systK.Ku = arma::ones<arma::mat>(basisobj.xdim,basisobj.zdim-basisobj.xdim);
 	lqrK.calc_gains(systK.Kx,systK.Ku,systK.tcurr);
  	mu = lqrK.mu(systK.Xcurr,syst1.tcurr);
  
