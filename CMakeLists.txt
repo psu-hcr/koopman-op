@@ -33,6 +33,9 @@ target_link_libraries(linear ${ARMADILLO_LIBRARIES})
 add_executable(twomass twomass.cpp)
 target_link_libraries(twomass ${ARMADILLO_LIBRARIES})
 
+add_executable(pend pend.cpp)
+target_link_libraries(pend  ${ARMADILLO_LIBRARIES})
+
 #add_executable(sac_doubleint sac_doubleint.cpp)
 #target_link_libraries(sac_doubleint ${ARMADILLO_LIBRARIES})
 

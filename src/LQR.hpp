@@ -57,8 +57,8 @@ void lqr::calc_gains(const arma::mat& _A,const arma::mat& _B, double _tcurr){
 	arma::vec Pflat = Qf.as_col(); int na = 1.;
 	arma::mat P;
    for(int i = horizon;i>0;i--){
-	   P = arma::reshape(Pflat,arma::size(Qf));
-	   Klist.submat(udim*i-udim,0,udim*i-1,xdim-1)=Rinv*B.t()*P; 
+	   P = arma::reshape(Pflat,arma::size(Qf)); 
+	   Klist.submat(udim*i-udim,0,udim*i-1,xdim-1)=Rinv*B.t()*P;  
 	   //Pflat = RK4_step<lqr,int>(this,Pflat,na,-1.0*dt);
 	   Pflat = Pflat - f(Pflat,i)*dt;
 	   }

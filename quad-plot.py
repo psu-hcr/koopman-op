@@ -2,10 +2,6 @@ import numpy as np
 from numpy import genfromtxt
 import matplotlib.pyplot as plt
 
-<<<<<<< HEAD
-=======
-
->>>>>>> c760725c7cb23728f41b83a8eb77a46100e60f67
 data=genfromtxt('/home/lu/koopman-op/test.csv',delimiter=",",dtype=float)
 data = np.delete(data,0,0)
 tlist = data[0:-1,0]
