@@ -76,32 +76,19 @@ class sac {
 template <class system, class objective>
 void sac<system,objective>::SAC_calc(){ 
 
-<<<<<<< HEAD
   ulist.col(0) = sys->Ucurr; 
   arma::vec ustar = arma::zeros<arma::vec>(size(sys->Ucurr)); 
-=======
-  ulist.col(0) = sys->Ucurr;
-  arma::vec ustar;
-  ustar = arma::zeros<arma::vec>(size(sys->Ucurr));
->>>>>>> c760725c7cb23728f41b83a8eb77a46100e60f67
   double tau[2] = {0,0};
   arma::uword tautemp; 
   arma::mat xsol,rhosol;
   arma::mat utemp = ulist;
   arma::mat usched = arma::zeros<arma::mat>(umax.n_rows,T_index);
   arma::mat Jtau = arma::zeros<arma::mat>(1,T_index);
-<<<<<<< HEAD
   double J1init,J1new,dJmin,alphad,lambda,J_QR,J_fisher,J_boundary; 
   std::cout<<"Jinit"<<std::endl;
   xsol = xforward(ulist); 
   J1init = cost->calc_cost(xsol,ulist); //std::cout<<"SAC4"<<std::endl;//must execute before rhoback for ergodic cost fxns
   rhosol = rhoback(xsol, ulist); //std::cout<<"SAC5"<<std::endl;
-=======
-  double J1init,J1new,dJmin,alphad,lambda; 
-  xsol = xforward(ulist);
-  J1init = cost->calc_cost(xsol,ulist);//must execute before rhoback for ergodic cost fxns
-  rhosol = rhoback(xsol, ulist);
->>>>>>> c760725c7cb23728f41b83a8eb77a46100e60f67
   dJmin = 0.;//gamma*J1init
   alphad = gamma*J1init;
   arma::mat Lam;
@@ -109,7 +96,6 @@ void sac<system,objective>::SAC_calc(){
   
   for(int i = 0; i<T_index;i++){
     Lam = sys->hx(xsol.col(i)).t()*rhosol.col(i)*rhosol.col(i).t()*sys->hx(xsol.col(i));
-<<<<<<< HEAD
     //std::cout<<i<<std::endl;
     /*std::cout<<"rho"<<std::endl;
     std::cout<<(rhosol.col(i))<<std::endl;
@@ -125,15 +111,6 @@ void sac<system,objective>::SAC_calc(){
     Jtau.col(i) =arma::norm(usched.col(i))+dJdlam+pow((double)i*sys->dt,beta);
   }
   
-=======
-	//usched.col(i) = solve((Lam +cost->R),(Lam*ulist.col(i) + sys->hx(xsol.col(i)).t()*rhosol.col(i)*alphad));
-	usched.col(i) = (Lam +cost->R).i()*(Lam*ulist.col(i) + sys->hx(xsol.col(i)).t()*rhosol.col(i)*alphad); //error is in (Lam +cost->R).i()
-	//usched.col(i) = -(cost->R).i()*(sys->hx(xsol.col(i)).t()*rhosol.col(i))+ulist.col(i);
-    dJdlam = dJdlam_t(xsol.col(i),rhosol.col(i),usched.col(i),ulist.col(i));
-    Jtau.col(i) =arma::norm(usched.col(i))+dJdlam+pow((double)i*sys->dt,beta);
-    }
-	
->>>>>>> c760725c7cb23728f41b83a8eb77a46100e60f67
   tautemp = Jtau.index_min(); 
   ustar=saturation(usched.col(tautemp));//ustar.u=usched.col(0);
   int k = 0; J1new = 1000*J1init;

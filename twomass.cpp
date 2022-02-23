@@ -78,7 +78,7 @@ int main(){
 	lqrK.calc_gains(systK.Kx,systK.Ku,systK.tcurr); 
  	mu = lqrK.mu(systK.Xcurr,syst1.tcurr); 
  
-	while (syst1.tcurr<40.){
+	while (syst1.tcurr<80.){
 		myfile<<syst1.tcurr<<",";
 		myfile<<measure(0)<<","<<measure(1)<<","<<measure(2)<<","<<measure(3)<<",";
 		myfile<<syst1.Ucurr(0)<<","<<syst1.Ucurr(1)<<",";
