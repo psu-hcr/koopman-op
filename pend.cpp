@@ -84,8 +84,8 @@ int main(){
 		systK.calc_K(measure,syst1.Ucurr);//add to data set and update Kx, Ku
 		lqrK.calc_gains(systK.Kx,systK.Ku,systK.tcurr);//update lqr gain
 		mu = lqrK.mu(systK.Xcurr,systK.tcurr);//this is just to record mu
-		syst1.Ucurr = ALpol.ustar_calc(); //compute ustar
-		//syst1.Ucurr =  lqrK.mu(systK.Xcurr,systK.tcurr);
+		//syst1.Ucurr = ALpol.ustar_calc(); //compute ustar
+		syst1.Ucurr =  lqrK.mu(systK.Xcurr,systK.tcurr);
 		if(syst1.Ucurr(0)!=syst1.Ucurr(0)){cout<<"returned a nan"<<endl;
 			syst1.Ucurr = unom(syst1.tcurr);
 		}
