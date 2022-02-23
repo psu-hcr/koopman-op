@@ -25,7 +25,7 @@ arma::vec xdk(double t){//should match xdim defined in basis
 };
 
 arma::vec unom(double t){
-        return {0.0, 0.0};
+        return {0.1, 0.1};
 };
 
 int main(){   
