@@ -25,7 +25,8 @@ arma::vec xdk(double t){//should match xdim defined in basis
 };
 
 arma::vec unom(double t){
-        return {0.1*sin(t), 0.1*sin(t)};
+        //return {0.1*sin(t), 0.1*sin(t)};
+		return {0.1, 0.1};
 };
 
 int main(){   
@@ -99,7 +100,15 @@ int main(){
 			cout<<"Time: "<<syst1.tcurr<<endl<<
 			(systK.Xcurr).t()<<"\n"<<lqrK.dmudz(systK.Xcurr,systK.tcurr)<<"\n";
 		}
-		costFI.infw = 100 * pow(0.8,systK.tcurr); //0.0f;
+		
+		// switch informaiton cost gain
+		if(systK.tcurr<20){
+			costFI.infw = 100.;
+		}
+		else{
+			costFI.infw = 0.;
+		}
+		//costFI.infw = 100 * pow(0.8,systK.tcurr); //0.0f;
 		}
 		
 
