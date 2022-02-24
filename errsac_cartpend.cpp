@@ -60,21 +60,21 @@ int main()
     myfile<<"time,theta,thetadot,x,xdot,u,uK,thetaK\n";
  
     while (syst1.tcurr<15.0){
-    myfile<<syst1.tcurr<<",";
-    xwrap = syst1.proj_func(syst1.Xcurr); 
-    myfile<<xwrap(0)<<","<<xwrap(1)<<",";
-    myfile<<xwrap(2)<<","<<xwrap(3)<<",";
-    myfile<<syst1.Ucurr(0)<<","<<uK(0)<<","<<zwrap(0)<<"\n";
-	syst1.step();
-	sacsys.SAC_calc();
-	//systK.update_XU(syst1.Xcurr,sacsys.ulist.col(0));
-	systK.calc_K(syst1.Xcurr,sacsys.ulist.col(0));
-	systK.step();zwrap=systK.proj_func(systK.Xcurr);
-	sacsysK.SAC_calc();
-	uK=sacsysK.ulist.col(0); 
-	syst1.Ucurr = sacsys.ulist.col(0); 
-    sacsys.unom_shift();
-    if(fmod(syst1.tcurr,5)<syst1.dt)cout<<"Time: "<<syst1.tcurr<<"\n";
+		myfile<<syst1.tcurr<<",";
+		xwrap = syst1.proj_func(syst1.Xcurr); 
+		myfile<<xwrap(0)<<","<<xwrap(1)<<",";
+		myfile<<xwrap(2)<<","<<xwrap(3)<<",";
+		myfile<<syst1.Ucurr(0)<<","<<uK(0)<<","<<zwrap(0)<<"\n";
+		syst1.step();
+		sacsys.SAC_calc();
+		//systK.update_XU(syst1.Xcurr,sacsys.ulist.col(0));
+		systK.calc_K(syst1.Xcurr,sacsys.ulist.col(0));
+		systK.step();zwrap=systK.proj_func(systK.Xcurr);
+		sacsysK.SAC_calc();
+		uK=sacsysK.ulist.col(0); 
+		syst1.Ucurr = sacsys.ulist.col(0); 
+		sacsys.unom_shift();
+		if(fmod(syst1.tcurr,5)<syst1.dt)cout<<"Time: "<<syst1.tcurr<<"\n";
     } 
        
     myfile.close();
