@@ -25,7 +25,7 @@ arma::vec xdk(double t){//should match xdim defined in basis
 };
 
 arma::vec unom(double t){
-        return {0.1, 0.1};
+        return {0.1*sin(t), 0.1*sin(t)};
 };
 
 int main(){   
@@ -58,7 +58,7 @@ int main(){
 	arma::mat Qf = arma::zeros<arma::mat>(size(Qk));
     arma::vec umax(size(syst1.Ucurr)); umax.fill(6);
  	arma::vec noisecov = 1.0*arma::ones(basisobj.xdim);
-	arma::mat Rtil = 1.*arma::eye(systK.Ucurr.n_rows,systK.Ucurr.n_rows);
+	arma::mat Rtil = 10.*arma::eye(systK.Ucurr.n_rows,systK.Ucurr.n_rows);
 	//initialize lqr policy, fisher informaiton cost, and active learning controller
 	lqr lqrK(Qk, R,Qf,round(T/DT),umax,xdk, DT);
 	fishcost<KoopSys<twomassBasis>,lqr> costFI (&systK,&lqrK,noisecov);
@@ -78,7 +78,7 @@ int main(){
 	lqrK.calc_gains(systK.Kx,systK.Ku,systK.tcurr); 
  	mu = lqrK.mu(systK.Xcurr,syst1.tcurr); 
  
-	while (syst1.tcurr<80.){
+	while (syst1.tcurr<60.){
 		myfile<<syst1.tcurr<<",";
 		myfile<<measure(0)<<","<<measure(1)<<","<<measure(2)<<","<<measure(3)<<",";
 		myfile<<syst1.Ucurr(0)<<","<<syst1.Ucurr(1)<<",";
@@ -89,16 +89,19 @@ int main(){
 		systK.calc_K(measure,syst1.Ucurr);//add to data set and update Kx, Ku
 		lqrK.calc_gains(systK.Kx,systK.Ku,systK.tcurr);//update lqr gain
 		mu = lqrK.mu(systK.Xcurr,systK.tcurr);//this is just to record mu
-		//syst1.Ucurr = ALpol.ustar_calc(); //compute ustar
-		syst1.Ucurr =  lqrK.mu(systK.Xcurr,systK.tcurr);
+		syst1.Ucurr = ALpol.ustar_calc(); //compute ustar
+		//syst1.Ucurr =  lqrK.mu(systK.Xcurr,systK.tcurr);
 		if(syst1.Ucurr(0)!=syst1.Ucurr(0)){cout<<"returned a nan"<<endl;
 			syst1.Ucurr = unom(syst1.tcurr);
 		}
 		//systK.step();//this is just to record the model accuracy
-		if(fmod(syst1.tcurr,2)<syst1.dt)cout<<"Time: "<<syst1.tcurr<<endl<<
+		if(fmod(syst1.tcurr,2)<syst1.dt){
+			cout<<"Time: "<<syst1.tcurr<<endl<<
 			(systK.Xcurr).t()<<"\n"<<lqrK.dmudz(systK.Xcurr,systK.tcurr)<<"\n";
 		}
-		costFI.infw = 100.0 * pow(0.97,systK.tcurr);
+		costFI.infw = 100 * pow(0.8,systK.tcurr); //0.0f;
+		}
+		
 
 		myfile.close();
 

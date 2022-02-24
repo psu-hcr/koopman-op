@@ -93,7 +93,7 @@ int main(){
 		if(fmod(syst1.tcurr,2)<syst1.dt)cout<<"Time: "<<syst1.tcurr<<endl<<
 			(systK.Xcurr).t()<<"\n"<<lqrK.dmudz(systK.Xcurr,systK.tcurr)<<"\n";
 		}
-		costFI.infw = 100.0 * pow(0.97,systK.tcurr);
+		//costFI.infw = 100.0 * pow(0.97,systK.tcurr);
 
 		myfile.close();
 
