@@ -119,7 +119,7 @@ void sac<system,objective>::SAC_calc(){
     tau[0] = sys->tcurr + (double)tautemp*sys->dt -(lambda/2);
     tau[1] = sys->tcurr + (double)tautemp*sys->dt+(lambda/2);
     utemp = uInc(ustar,tau);
-	std::cout<<"K"<<k<<std::endl;
+	//std::cout<<"K"<<k<<std::endl;
     xsol = xforward(utemp);
     J1new = cost->calc_cost(xsol,utemp);
     k++;

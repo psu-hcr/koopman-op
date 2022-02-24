@@ -38,7 +38,7 @@ arma::vec pend::proj_func (const arma::vec& x){//anglewrapping function if neede
 }
 inline arma::vec pend::f(const arma::vec& x, const arma::vec& u){//control affine required
     arma::vec xdot ={x(1), 
-								   -g/L*sin(x(0)) -1/(m*L)*u(0) };
+								   -g/L*sin(x(0)) +1/(m*L)*u(0) };
     return xdot;
 }; 
 inline arma::vec pend::get_measurement(const arma::vec& x){

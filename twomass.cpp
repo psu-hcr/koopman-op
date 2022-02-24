@@ -109,10 +109,8 @@ int main(){
 			costFI.infw = 0.;
 		}
 		//costFI.infw = 100 * pow(0.8,systK.tcurr); //0.0f;
-		}
-		
-
-		myfile.close();
+	}
+	myfile.close();
 
 	 ofstream coeff;
 	 coeff.open("/home/lu/koopman-op/twomass-koopman.csv");
