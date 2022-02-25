@@ -17,10 +17,9 @@ using namespace std;
 #include"src/twomassbasis.hpp"
 
 arma::vec xdk(double t){//should match xdim defined in basis
-	//arma::vec ref = arma::zeros(2);
 	arma::vec ref = arma::zeros(4);
 	//ref(0) = sin(t); ref(1) = cos(t);
-	//ref(2) = sin(t); ref(3) = cos(t);
+	//ref(2) = 0; ref(3) = 0;
 	return ref;
 };
 
@@ -43,10 +42,10 @@ int main(){
  	KoopSys<twomassBasis> systK (DT,&basisobj);
  	twomass syst1 (DT);
 	//initialize states and control for both systems
-    syst1.Ucurr = {0.77, 0.77};//arma::randn(4); 
+    syst1.Ucurr = {0.0, 0.0};//arma::randn(4); 
     systK.Ucurr = syst1.Ucurr;
     //syst1.Xcurr = {0.1, 0.1};
-	syst1.Xcurr = {1.0, 0, 1.0, 0};
+	syst1.Xcurr = {1.0, 0, -1.0, 0};
  	systK.Xcurr = basisobj.zx(syst1.get_measurement(syst1.Xcurr));
 	
 	//set values for Q,R,Qf,umax,noisecov,Regularization

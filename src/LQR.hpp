@@ -66,7 +66,7 @@ return;}
 
 arma::mat lqr::K(double ti){
 	int i = round((ti-tcurr)/dt);
-	arma::mat Ki = Klist.submat(udim*i,0,udim*i+(udim-1),xdim-1);	
+	arma::mat Ki = Klist.submat(udim*i,0,udim*i+(udim-1),xdim-1);
 	return Ki;}
 
 arma::vec lqr::mu(const arma::vec& _x, double ti){

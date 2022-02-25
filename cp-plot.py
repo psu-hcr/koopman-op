@@ -2,7 +2,7 @@ import numpy as np
 from numpy import genfromtxt
 import matplotlib.pyplot as plt
 
-data=genfromtxt('/home/zxl5344/IROS2022/src/iiwa_ros/koopman-op/test.csv',delimiter=",",dtype=float)
+data=genfromtxt('/home/lu/koopman-op/test.csv',delimiter=",",dtype=float)
 data = np.delete(data,0,0)
 tlist = data[0:-1,0]
 x1 = (data[0:-1,1])
