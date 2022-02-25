@@ -12,14 +12,15 @@ mu1 = data[:, 4]
 
 
 plt.figure(1)
-plt.plot(time,x1,'r')
-plt.plot(time,x2,'g')
-
+plt.plot(time,x1,'r', label='theta')
+plt.plot(time,x2,'g', label='thetadot')
+plt.title("theta & thetadot")
+plt.legend()
 
 plt.figure(2)
-plt.plot(time,u1,'r')
-plt.plot(time,mu1,'g')
+plt.plot(time,u1,'r', label='u1')
+plt.plot(time,mu1,'g', label='mu1')
 plt.title("u1 & mu1")
-
+plt.legend()
 
 plt.show()

@@ -41,7 +41,7 @@ int main(){
 	//initialize states and control for both systems
     syst1.Ucurr = {0.0};
     systK.Ucurr = syst1.Ucurr;
-	syst1.Xcurr = {0.5, 0.0};
+	syst1.Xcurr = {0.25, 0.0};
  	systK.Xcurr = basisobj.zx(syst1.get_measurement(syst1.Xcurr));
 	
 	//set values for Q,R,Qf,umax,noisecov,Regularization
