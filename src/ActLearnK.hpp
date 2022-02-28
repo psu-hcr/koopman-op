@@ -43,6 +43,7 @@ class alk {
 	//cout<<"sys->dfdx(x,u)"<<sys->dfdx(x,u)<<endl;
 	//cout<<"sys->hx(x)"<<sys->hx(x)<<endl;
 	//cout<<"pol->dmudz(x,ti)"<<pol->dmudz(x,ti)<<endl;
+	//cout<<"rho"<<rho<<endl;
 	//cout<<"cost->dldz(x,u,ti)"<<cost->dldz(x,u,ti)<<endl;
 	//cout<<"pol->dldu(x,u,ti)"<<pol->dldu(x,u,ti)<<endl;
 	

@@ -41,7 +41,7 @@ inline arma::vec pend::f(const arma::vec& x, const arma::vec& u){//control affin
     return xdot;
 }; 
 inline arma::vec pend::get_measurement(const arma::vec& x){
-	return x;
+	return proj_func(x);
 };
 
 inline arma::mat pend::dfdx(const arma::vec& x, const arma::vec& u){
